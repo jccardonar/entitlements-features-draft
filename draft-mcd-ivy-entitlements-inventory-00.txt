@@ -12,14 +12,14 @@ Expires: 25 April 2025                                               NTT
 
 
                 A YANG module for entitlement inventory
-                       draft-ivy-entitlements-00
+                draft-mcd-ivy-entitlements-inventory-00
 
 Abstract
 
    This document proposes a YANG module with an inventory of
    entitlements.  The model helps manage details about entitlements,
-   such as their scope, how they’re assigned, and when they expire.  The
-   model introduces the a descriptive definition of features and use
+   such as their scope, how they are assigned, and when they expire.
+   The model introduces the a descriptive definition of features and use
    restriction that can help a entitlement admistration an understanding
    of the state of their assets and the capabilities available across
    the network.
@@ -83,11 +83,13 @@ Table of Contents
            entitlements provide limits, how close the use of those
            features is to those limits.  . . . . . . . . . . . . . .  17
    3.  Entitlements model  . . . . . . . . . . . . . . . . . . . . .  17
-   4.  Use cases . . . . . . . . . . . . . . . . . . . . . . . . . .  32
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  33
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .  33
-     5.2.  Informative References  . . . . . . . . . . . . . . . . .  33
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  33
+   4.  Use cases . . . . . . . . . . . . . . . . . . . . . . . . . .  34
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  35
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  35
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  35
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  35
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  35
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  35
 
 1.  Introduction
 
@@ -103,8 +105,6 @@ Table of Contents
 1.1.  Glosary
 
    TODO.  We need the distinction between licenses and entitlements.
-
-
 
 
 
@@ -920,7 +920,112 @@ Internet-Draft            entitlement inventory             October 2024
 
    =============== NOTE: '\' line wrapping per RFC 8792 ================
 
-   module: ietf-network-inventory-entitlements
+   module: ietf-network-inventory
+     +--rw network-inventory
+        +--rw network-elements
+           +--rw network-element* [ne-id]
+              +--rw ne-id                           string
+              +--ro ne-type?                        identityref
+              +--ro uuid?                           yang:uuid
+              +--rw name?                           string
+              +--rw description?                    string
+              +--rw alias?                          string
+              +--ro hardware-rev?                   string
+              +--ro software-rev?                   string
+              +--ro software-patch-rev*             string
+              +--ro mfg-name?                       string
+              +--ro mfg-date?                       yang:date-and-time
+              +--ro serial-number?                  string
+              +--ro product-name?                   string
+              +--rw components
+              |  +--rw component* [component-id]
+              |     +--rw component-id             string
+              |     +--ro class                    union
+              |     +--ro uuid?                    yang:uuid
+              |     +--rw name?                    string
+              |     +--rw description?             string
+              |     +--rw alias?                   string
+              |     +--ro child-component-ref
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 17]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+              |     +--ro parent-rel-pos?          int32
+              |     +--ro parent-component-ref
+              |     +--ro hardware-rev?            string
+              |     +--ro firmware-rev?            string
+              |     +--ro software-rev?            string
+              |     +--ro software-patch-rev*      string
+              |     +--ro serial-num?              string
+              |     +--ro mfg-name?                string
+              |     +--ro part-number?             string
+              |     +--ro product-name?            string
+              |     +--ro asset-id?                string
+              |     +--ro is-fru?                  boolean
+              |     +--ro mfg-date?                yang:date-and-time
+              |     +--ro uri*                     inet:uri
+              |     +--ro chassis-specific-info
+              |     +--ro slot-specific-info
+              |     +--ro board-specific-info
+              |     +--ro port-specific-info
+              +--rw nwie:entitlement-information
+                 +--rw nwie:entitlements
+                 |  +--rw nwie:entitlment* [entitlement-id]
+                 |     +--rw nwie:entitlement-id    -> /network-invento\
+   ry-entitlements/entitlements/entitlement/uid
+                 |     +--rw nwie:component-id?     -> ../../../../nwi:\
+   components/nwi:component/nwi:component-id
+                 +--rw nwie:feature-information
+                 |  +--rw nwie:feature-use* [feature-class feature-id]
+                 |     +--rw nwie:feature-class              -> /networ\
+   k-inventory-entitlements/features/entitlement-feature-class/entitlem\
+   ent-feature-class
+                 |     +--rw nwie:feature-id                 -> /networ\
+   k-inventory-entitlements/features/entitlement-feature-class[entitlem\
+   ent-feature-class=current()/../feature-class]/feature/feature-id
+                 |     +--rw nwie:component-id?              -> ../../.\
+   ./../nwi:components/nwi:component/nwi:component-id
+                 |     +--rw nwie:supporting-entitlements
+                 |     |  +--rw nwie:entitlement* [entitlement-id]
+                 |     |     +--rw nwie:entitlement-id    -> ../../../.\
+   ./../entitlements/entitlment/entitlement-id
+                 |     +--rw nwie:allowed?                   boolean
+                 |     +--rw nwie:in-use?                    boolean
+                 +--rw nwie:asset-restrictions
+                    +--rw nwie:asset-restriction-class* [asset-restrict\
+   ion-class]
+                       +--rw nwie:asset-restriction-class    identityref
+                       +--rw nwie:asset-restriction* [asset-restriction\
+   -id]
+                          +--rw nwie:asset-restriction-id    string
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 18]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+                          +--rw nwie:component-id?           -> ../../.\
+   ./../../nwi:components/nwi:component/nwi:component-id
+                          +--rw nwie:description?            string
+                          +--rw nwie:resource-name?          string
+                          +--rw nwie:units?                  string
+                          +--rw nwie:max-value?              int32
+                          +--rw nwie:current-value?          int32
+                          +--rw nwie:feature-class?          -> ../../.\
+   ./../feature-information/feature-use/feature-class
+                          +--rw nwie:feature-id?             -> ../../.\
+   ./../feature-information/feature-use[feature-class=current()/../feat\
+   ure-class]/feature-id
+
+   module: iana-hardware
+
+   module: ietf-network-inventory-entitlements-features
      +--rw network-inventory-entitlements
         +--rw features
         |  +--rw entitlement-feature-class* [entitlement-feature-class]
@@ -946,14 +1051,6 @@ Internet-Draft            entitlement inventory             October 2024
               |        +--rw units?            string
               |        +--rw max-value?        int32
               |        +--rw current-value?    int32
-
-
-
-Palmero, et al.           Expires 25 April 2025                [Page 17]
-
-Internet-Draft            entitlement inventory             October 2024
-
-
               +--rw capabilities
               |  +--rw capability-class* [capability-class]
               |     +--rw capability-class    identityref
@@ -961,6 +1058,14 @@ Internet-Draft            entitlement inventory             October 2024
               |        +--rw capability-id           string
               |        +--rw feature-class?          -> /network-invent\
    ory-entitlements/features/entitlement-feature-class/entitlement-feat\
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 19]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
    ure-class
               |        +--rw feature-id?             -> /network-invent\
    ory-entitlements/features/entitlement-feature-class[entitlement-feat\
@@ -992,8 +1097,8 @@ Internet-Draft            entitlement inventory             October 2024
           |  +--rw entitlment* [entitlement-id]
           |     +--rw entitlement-id    -> /network-inventory-entitleme\
    nts/entitlements/entitlement/uid
-          |     +--rw component-id?     -> ../../../../nwi:components/c\
-   omponent/component-id
+          |     +--rw component-id?     -> ../../../../nwi:components/n\
+   wi:component/nwi:component-id
           +--rw feature-information
           |  +--rw feature-use* [feature-class feature-id]
           |     +--rw feature-class              -> /network-inventory-\
@@ -1002,39 +1107,44 @@ Internet-Draft            entitlement inventory             October 2024
           |     +--rw feature-id                 -> /network-inventory-\
    entitlements/features/entitlement-feature-class[entitlement-feature-\
    class=current()/../feature-class]/feature/feature-id
-
-
-
-Palmero, et al.           Expires 25 April 2025                [Page 18]
-
-Internet-Draft            entitlement inventory             October 2024
-
-
           |     +--rw component-id?              -> ../../../../nwi:com\
-   ponents/component/component-id
+   ponents/nwi:component/nwi:component-id
           |     +--rw supporting-entitlements
           |     |  +--rw entitlement* [entitlement-id]
           |     |     +--rw entitlement-id    -> ../../../../../entitle\
    ments/entitlment/entitlement-id
           |     +--rw allowed?                   boolean
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 20]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
           |     +--rw in-use?                    boolean
           +--rw asset-restrictions
              +--rw asset-restriction-class* [asset-restriction-class]
                 +--rw asset-restriction-class    identityref
                 +--rw asset-restriction* [asset-restriction-id]
                    +--rw component-id?           -> ../../../../../nwi:\
-   components/component/component-id
+   components/nwi:component/nwi:component-id
                    +--rw asset-restriction-id    string
                    +--rw description?            string
-                   +--rw resource-name?          string
-                   +--rw units?                  string
-                   +--rw max-value?              int32
-                   +--rw current-value?          int32
-                   +--rw feature-class?          -> ../../../../feature\
-   -information/feature-use/feature-class
-                   +--rw feature-id?             -> ../../../../feature\
-   -information/feature-use[feature-class=current()/../feature-class]/f\
-   eature-id
+     augment /nwi:network-inventory/nwi:network-elements/nwi:network-el\
+   ement/entitlement-information/asset-restrictions/asset-restriction-c\
+   lass/asset-restriction:
+       +--rw resource-name?   string
+       +--rw units?           string
+       +--rw max-value?       int32
+       +--rw current-value?   int32
+     augment /nwi:network-inventory/nwi:network-elements/nwi:network-el\
+   ement/entitlement-information/asset-restrictions/asset-restriction-c\
+   lass/asset-restriction:
+       +--rw feature-class?   -> ../../../../feature-information/featur\
+   e-use/feature-class
+       +--rw feature-id?      -> ../../../../feature-information/featur\
+   e-use[feature-class=current()/../feature-class]/feature-id
 
                     Figure 5: Tree of entitlement model
 
@@ -1058,16 +1168,16 @@ Internet-Draft            entitlement inventory             October 2024
      }
 
      organization
+       "IETF IVY Working Group";
+     contact
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 19]
+Palmero, et al.           Expires 25 April 2025                [Page 21]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-       "IETF IVY Working Group";
-     contact
        "WG Web:   <https://datatracker.ietf.org/wg/ivy/>
         WG List:  <mailto:inventory-yang@ietf.org>
 
@@ -1115,14 +1225,15 @@ Internet-Draft            entitlement inventory             October 2024
          "RFC XXXX:.";
      }
 
+     identity entitlement-capability-description {
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 20]
+
+Palmero, et al.           Expires 25 April 2025                [Page 22]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-     identity entitlement-capability-description {
        description
          "Base identity for classes of LMO. Provides just an id, and a";
      }
@@ -1170,15 +1281,15 @@ Internet-Draft            entitlement inventory             October 2024
      }
 
      container network-inventory-entitlements {
+       container features {
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 21]
+Palmero, et al.           Expires 25 April 2025                [Page 23]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-       container features {
          list entitlement-feature-class {
            description
              "Optional list of features known by this data server. ";
@@ -1226,15 +1337,15 @@ Internet-Draft            entitlement inventory             October 2024
              type entitlement-state-t;
              description
                "Entitlement state; e.g., active, inactive, or unknown";
+           }
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 22]
+Palmero, et al.           Expires 25 April 2025                [Page 24]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-           }
            container renewal-profile {
              description
                "Profile of entitlement renewal status and information";
@@ -1282,15 +1393,15 @@ Internet-Draft            entitlement inventory             October 2024
                "Descriptive list of features the entitlement grants";
              list capability-class {
                key "capability-class";
+               leaf capability-class {
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 23]
+Palmero, et al.           Expires 25 April 2025                [Page 25]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-               leaf capability-class {
                  type identityref {
                    base entitlement-capability-description;
                  }
@@ -1338,15 +1449,15 @@ Internet-Draft            entitlement inventory             October 2024
              default "false";
              description "Optional flag to signal that the entitlment i\
    \s not attached to any holder, that is, the permissions granted are \
+   \for everybody.";
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 24]
+Palmero, et al.           Expires 25 April 2025                [Page 26]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-   \for everybody.";
            }
 
            container holders {
@@ -1364,7 +1475,7 @@ Internet-Draft            entitlement inventory             October 2024
                "The entities to which the entilements grants permissios\
    \n to.
                 There can be multiple of them.
-                The container SHOULD not exist if the data server does \
+                The container SHOULD NOT exist if the data server does \
    \not known
                 of the holders of the entitlement. An empty holders SHO\
    \ULD be avoided, instead
@@ -1394,15 +1505,15 @@ Internet-Draft            entitlement inventory             October 2024
                  type string;
                }
                container components {
+                 list component {
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 25]
+Palmero, et al.           Expires 25 April 2025                [Page 27]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-                 list component {
                    key "network-element component-id";
                    leaf network-element {
                      type string;
@@ -1450,15 +1561,15 @@ Internet-Draft            entitlement inventory             October 2024
          description
            "Class of feature to enable";
        }
+       leaf feature-id {
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 26]
+Palmero, et al.           Expires 25 April 2025                [Page 28]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-       leaf feature-id {
          type leafref {
            path "/network-inventory-entitlements/features/entitlement-f\
    \eature-class[entitlement-feature-class="
@@ -1506,15 +1617,15 @@ Internet-Draft            entitlement inventory             October 2024
           + "'entitlement-global-restriction-generic')";
        leaf description {
          type string;
+         description
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 27]
+Palmero, et al.           Expires 25 April 2025                [Page 29]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-         description
            "Description of the resource capability";
        }
        leaf units {
@@ -1562,15 +1673,15 @@ Internet-Draft            entitlement inventory             October 2024
                  type leafref {
                    path "../../../../nwi:components/nwi:component/nwi:c\
    \omponent-id";
+                 }
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 28]
+Palmero, et al.           Expires 25 April 2025                [Page 30]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-                 }
                }
            }
          }
@@ -1618,15 +1729,15 @@ Internet-Draft            entitlement inventory             October 2024
                  leaf entitlement-id {
                    type leafref {
                      path "../../../../../entitlements/entitlment/entit\
+   \lement-id";
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 29]
+Palmero, et al.           Expires 25 April 2025                [Page 31]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-   \lement-id";
                    }
                    description
                      "Reference to almo-class";
@@ -1674,15 +1785,15 @@ Internet-Draft            entitlement inventory             October 2024
                  network-element, specify it";
                  type leafref {
                    path "../../../../../nwi:components/nwi:component/nw\
+   \i:component-id";
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 30]
+Palmero, et al.           Expires 25 April 2025                [Page 32]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-   \i:component-id";
                  }
                }
 
@@ -1730,15 +1841,15 @@ Internet-Draft            entitlement inventory             October 2024
            type int32;
          }
 
+         leaf current-value {
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 31]
+Palmero, et al.           Expires 25 April 2025                [Page 33]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-         leaf current-value {
            type int32;
          }
 
@@ -1786,19 +1897,26 @@ Internet-Draft            entitlement inventory             October 2024
    could be modelled by the model, and show how each of the questions
    that we have explored in this draft can be answered by the model.
 
+   TODO in next versions.
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 32]
+Palmero, et al.           Expires 25 April 2025                [Page 34]
 
 Internet-Draft            entitlement inventory             October 2024
 
 
-   TODO in next versions.
+5.  IANA Considerations
 
-5.  References
+   TODO
 
-5.1.  Normative References
+6.  Security Considerations
+
+   TODO
+
+7.  References
+
+7.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1809,7 +1927,7 @@ Internet-Draft            entitlement inventory             October 2024
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-5.2.  Informative References
+7.2.  Informative References
 
    [I-D.draft-ietf-ivy-network-inventory-yang-03]
               Yu, C., Belotti, S., Bouquier, J., Peruzzini, F., and P.
@@ -1839,10 +1957,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-Palmero, et al.           Expires 25 April 2025                [Page 33]
+Palmero, et al.           Expires 25 April 2025                [Page 35]

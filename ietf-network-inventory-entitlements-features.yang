@@ -256,7 +256,7 @@ module ietf-network-inventory-entitlements-features {
           description
             "The entities to which the entilements grants permissiosn to.
              There can be multiple of them. 
-             The container SHOULD not exist if the data server does not known
+             The container SHOULD NOT exist if the data server does not known
              of the holders of the entitlement. An empty holders SHOULD be avoided, instead
              the universal-access flag should be set.
              It might be expanded to cover selection cases e.g. all users in

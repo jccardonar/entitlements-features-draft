@@ -275,7 +275,7 @@ module ietf-network-inventory-entitlements-features {
             "The entities to which the entilements grants permissios\
 \n to.
              There can be multiple of them. 
-             The container SHOULD not exist if the data server does \
+             The container SHOULD NOT exist if the data server does \
 \not known
              of the holders of the entitlement. An empty holders SHO\
 \ULD be avoided, instead

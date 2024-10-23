@@ -1,4 +1,79 @@
-module: ietf-network-inventory-entitlements
+module: ietf-network-inventory
+  +--rw network-inventory
+     +--rw network-elements
+        +--rw network-element* [ne-id]
+           +--rw ne-id                           string
+           +--ro ne-type?                        identityref
+           +--ro uuid?                           yang:uuid
+           +--rw name?                           string
+           +--rw description?                    string
+           +--rw alias?                          string
+           +--ro hardware-rev?                   string
+           +--ro software-rev?                   string
+           +--ro software-patch-rev*             string
+           +--ro mfg-name?                       string
+           +--ro mfg-date?                       yang:date-and-time
+           +--ro serial-number?                  string
+           +--ro product-name?                   string
+           +--rw components
+           |  +--rw component* [component-id]
+           |     +--rw component-id             string
+           |     +--ro class                    union
+           |     +--ro uuid?                    yang:uuid
+           |     +--rw name?                    string
+           |     +--rw description?             string
+           |     +--rw alias?                   string
+           |     +--ro child-component-ref
+           |     +--ro parent-rel-pos?          int32
+           |     +--ro parent-component-ref
+           |     +--ro hardware-rev?            string
+           |     +--ro firmware-rev?            string
+           |     +--ro software-rev?            string
+           |     +--ro software-patch-rev*      string
+           |     +--ro serial-num?              string
+           |     +--ro mfg-name?                string
+           |     +--ro part-number?             string
+           |     +--ro product-name?            string
+           |     +--ro asset-id?                string
+           |     +--ro is-fru?                  boolean
+           |     +--ro mfg-date?                yang:date-and-time
+           |     +--ro uri*                     inet:uri
+           |     +--ro chassis-specific-info
+           |     +--ro slot-specific-info
+           |     +--ro board-specific-info
+           |     +--ro port-specific-info
+           +--rw nwie:entitlement-information
+              +--rw nwie:entitlements
+              |  +--rw nwie:entitlment* [entitlement-id]
+              |     +--rw nwie:entitlement-id    -> /network-inventory-entitlements/entitlements/entitlement/uid
+              |     +--rw nwie:component-id?     -> ../../../../nwi:components/nwi:component/nwi:component-id
+              +--rw nwie:feature-information
+              |  +--rw nwie:feature-use* [feature-class feature-id]
+              |     +--rw nwie:feature-class              -> /network-inventory-entitlements/features/entitlement-feature-class/entitlement-feature-class
+              |     +--rw nwie:feature-id                 -> /network-inventory-entitlements/features/entitlement-feature-class[entitlement-feature-class=current()/../feature-class]/feature/feature-id
+              |     +--rw nwie:component-id?              -> ../../../../nwi:components/nwi:component/nwi:component-id
+              |     +--rw nwie:supporting-entitlements
+              |     |  +--rw nwie:entitlement* [entitlement-id]
+              |     |     +--rw nwie:entitlement-id    -> ../../../../../entitlements/entitlment/entitlement-id
+              |     +--rw nwie:allowed?                   boolean
+              |     +--rw nwie:in-use?                    boolean
+              +--rw nwie:asset-restrictions
+                 +--rw nwie:asset-restriction-class* [asset-restriction-class]
+                    +--rw nwie:asset-restriction-class    identityref
+                    +--rw nwie:asset-restriction* [asset-restriction-id]
+                       +--rw nwie:asset-restriction-id    string
+                       +--rw nwie:component-id?           -> ../../../../../nwi:components/nwi:component/nwi:component-id
+                       +--rw nwie:description?            string
+                       +--rw nwie:resource-name?          string
+                       +--rw nwie:units?                  string
+                       +--rw nwie:max-value?              int32
+                       +--rw nwie:current-value?          int32
+                       +--rw nwie:feature-class?          -> ../../../../feature-information/feature-use/feature-class
+                       +--rw nwie:feature-id?             -> ../../../../feature-information/feature-use[feature-class=current()/../feature-class]/feature-id
+
+module: iana-hardware
+
+module: ietf-network-inventory-entitlements-features
   +--rw network-inventory-entitlements
      +--rw features
      |  +--rw entitlement-feature-class* [entitlement-feature-class]
@@ -54,12 +129,12 @@ module: ietf-network-inventory-entitlements
        +--rw entitlements
        |  +--rw entitlment* [entitlement-id]
        |     +--rw entitlement-id    -> /network-inventory-entitlements/entitlements/entitlement/uid
-       |     +--rw component-id?     -> ../../../../nwi:components/component/component-id
+       |     +--rw component-id?     -> ../../../../nwi:components/nwi:component/nwi:component-id
        +--rw feature-information
        |  +--rw feature-use* [feature-class feature-id]
        |     +--rw feature-class              -> /network-inventory-entitlements/features/entitlement-feature-class/entitlement-feature-class
        |     +--rw feature-id                 -> /network-inventory-entitlements/features/entitlement-feature-class[entitlement-feature-class=current()/../feature-class]/feature/feature-id
-       |     +--rw component-id?              -> ../../../../nwi:components/component/component-id
+       |     +--rw component-id?              -> ../../../../nwi:components/nwi:component/nwi:component-id
        |     +--rw supporting-entitlements
        |     |  +--rw entitlement* [entitlement-id]
        |     |     +--rw entitlement-id    -> ../../../../../entitlements/entitlment/entitlement-id
@@ -69,12 +144,14 @@ module: ietf-network-inventory-entitlements
           +--rw asset-restriction-class* [asset-restriction-class]
              +--rw asset-restriction-class    identityref
              +--rw asset-restriction* [asset-restriction-id]
-                +--rw component-id?           -> ../../../../../nwi:components/component/component-id
+                +--rw component-id?           -> ../../../../../nwi:components/nwi:component/nwi:component-id
                 +--rw asset-restriction-id    string
                 +--rw description?            string
-                +--rw resource-name?          string
-                +--rw units?                  string
-                +--rw max-value?              int32
-                +--rw current-value?          int32
-                +--rw feature-class?          -> ../../../../feature-information/feature-use/feature-class
-                +--rw feature-id?             -> ../../../../feature-information/feature-use[feature-class=current()/../feature-class]/feature-id
+  augment /nwi:network-inventory/nwi:network-elements/nwi:network-element/entitlement-information/asset-restrictions/asset-restriction-class/asset-restriction:
+    +--rw resource-name?   string
+    +--rw units?           string
+    +--rw max-value?       int32
+    +--rw current-value?   int32
+  augment /nwi:network-inventory/nwi:network-elements/nwi:network-element/entitlement-information/asset-restrictions/asset-restriction-class/asset-restriction:
+    +--rw feature-class?   -> ../../../../feature-information/feature-use/feature-class
+    +--rw feature-id?      -> ../../../../feature-information/feature-use[feature-class=current()/../feature-class]/feature-id

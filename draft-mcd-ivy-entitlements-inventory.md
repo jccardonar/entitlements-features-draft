@@ -6,7 +6,7 @@ submissiontype: IETF
 area: OPS
 wg: IVY
 
-docname: draft-ivy-entitlements-00
+docname: draft-mcd-ivy-entitlements-inventory-00
 
 title: A YANG module for entitlement inventory
 abbrev: entitlement inventory
@@ -34,9 +34,7 @@ author:
   email: diego.r.lopez@telefonica.com
 
 --- abstract
-
-This document proposes a YANG module with an inventory of entitlements. The model helps manage details about entitlements, such as  their scope, how they’re assigned, and when they expire. The model introduces the a descriptive definition of features and use restriction that can help a entitlement admistration an understanding of the state of their assets and the capabilities available across the network. 
-
+This document proposes a YANG module with an inventory of entitlements. The model helps manage details about entitlements, such as  their scope, how they are assigned, and when they expire. The model introduces the a descriptive definition of features and use restriction that can help a entitlement admistration an understanding of the state of their assets and the capabilities available across the network. 
 --- middle
 
 # Introduction
@@ -197,4 +195,12 @@ The full entitlement model comes in the next figure.
 In this section we will describe use cases, an example of how they could be modelled by the model, and show how each of the questions that we have explored in this draft can be answered by the model.
 
 TODO in next versions.
+
+# IANA Considerations {#IANA}
+
+TODO
+
+# Security Considerations {#Security}
+
+TODO
 
