@@ -1,0 +1,24 @@
+Entry 0:
+  name: ent_acme_router_generic_operation_one
+  product_id: acme_router_generic_operation
+  state: active
+  attached_assets: router_one
+  assets_where_is_installed: router_one,router_two
+  restrictions_apply: False
+
+Entry 1:
+  name: ent_acme_line_card_generic_operation
+  product_id: general_component_license_operation
+  state: active
+  attached_assets: 
+  assets_where_is_installed: router_one-acme_router_one_line_card,router_two-
+    acme_router_two_line_card
+  restrictions_apply: False
+
+Entry 2:
+  name: ent_acme_line_card_full_ports
+  product_id: line_card_full_port_license
+  state: active
+  attached_assets: 
+  assets_where_is_installed: router_one-acme_router_one_line_card
+  restrictions_apply: True

@@ -1,0 +1,80 @@
+module: ietf-network-inventory-entitlements
+  +--rw network-inventory-entitlements
+     +--rw features
+     |  +--rw entitlement-feature-class* [entitlement-feature-class]
+     |     +--rw entitlement-feature-class    identityref
+     |     +--rw feature* [feature-id]
+     |        +--rw feature-id                      string
+     |        +--rw extended-feature-description?   string
+     +--rw entitlements
+        +--rw entitlement* [uid]
+           +--rw uid                         string
+           +--rw product-id?                 string
+           +--rw state?                      entitlement-state-t
+           +--rw renewal-profile
+           |  +--rw activation-date?   yang:date-and-time
+           |  +--rw expiration-date?   yang:date-and-time
+           +--rw restrictions
+           |  +--rw entitlment-restriction-class* [entitlement-restriction-class]
+           |     +--rw entitlement-restriction-class    identityref
+           |     +--rw restriction* [restriction-id]
+           |        +--rw restriction-id    string
+           |        +--rw description?      string
+           |        +--rw units?            string
+           |        +--rw max-value?        int32
+           |        +--rw current-value?    int32
+           +--rw capabilities
+           |  +--rw capability-class* [capability-class]
+           |     +--rw capability-class    identityref
+           |     +--rw capability* [capability-id]
+           |        +--rw capability-id           string
+           |        +--rw feature-class?          -> /network-inventory-entitlements/features/entitlement-feature-class/entitlement-feature-class
+           |        +--rw feature-id?             -> /network-inventory-entitlements/features/entitlement-feature-class[entitlement-feature-class=current()/../feature-class]/feature/feature-id
+           |        +--rw resource-description?   string
+           |        +--rw resource-units?         string
+           |        +--rw resource-amount?        int32
+           +--rw parent-entitlement-uid?     -> ../../entitlement/uid
+           +--rw entitlement-attachements
+              +--rw universal-access?   boolean
+              +--rw holders!
+              |  +--rw organizations_names
+              |  |  +--rw organizations*   string
+              |  +--rw users_names
+              |     +--rw users*   string
+              +--rw assets
+                 +--rw network-inventory
+                    +--rw network-elements*   string
+                    +--rw components
+                       +--rw component* [network-element component-id]
+                          +--rw network-element    string
+                          +--rw component-id       string
+
+  augment /nwi:network-inventory/nwi:network-elements/nwi:network-element:
+    +--rw entitlement-information
+       +--rw entitlements
+       |  +--rw entitlment* [entitlement-id]
+       |     +--rw entitlement-id    -> /network-inventory-entitlements/entitlements/entitlement/uid
+       |     +--rw component-id?     -> ../../../../nwi:components/component/component-id
+       +--rw feature-information
+       |  +--rw feature-use* [feature-class feature-id]
+       |     +--rw feature-class              -> /network-inventory-entitlements/features/entitlement-feature-class/entitlement-feature-class
+       |     +--rw feature-id                 -> /network-inventory-entitlements/features/entitlement-feature-class[entitlement-feature-class=current()/../feature-class]/feature/feature-id
+       |     +--rw component-id?              -> ../../../../nwi:components/component/component-id
+       |     +--rw supporting-entitlements
+       |     |  +--rw entitlement* [entitlement-id]
+       |     |     +--rw entitlement-id    -> ../../../../../entitlements/entitlment/entitlement-id
+       |     +--rw allowed?                   boolean
+       |     +--rw in-use?                    boolean
+       +--rw asset-restrictions
+          +--rw asset-restriction-class* [asset-restriction-class]
+             +--rw asset-restriction-class    identityref
+             +--rw asset-restriction* [asset-restriction-id]
+                +--rw component-id?           -> ../../../../../nwi:components/component/component-id
+                +--rw asset-restriction-id    string
+                +--rw description?            string
+                +--rw resource-name?          string
+                +--rw units?                  string
+                +--rw max-value?              int32
+                +--rw current-value?          int32
+                +--rw feature-class?          -> ../../../../feature-information/feature-use/feature-class
+                +--rw feature-id?             -> ../../../../feature-information/feature-use[feature-class=current()/../feature-class]/feature-id

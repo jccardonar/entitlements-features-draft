@@ -1,0 +1,6 @@
+Entry 0:
+  description: Bandwidth limit
+  units: Gbps
+  max-value: 100
+  current-value: 79
+  asset: router_two-acme_router_two_port_400gbps

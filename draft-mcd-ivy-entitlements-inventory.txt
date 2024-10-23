@@ -1,0 +1,1848 @@
+
+
+
+
+IVY                                                      M. Palmero, Ed.
+Internet-Draft                                             Cisco Systems
+Intended status: Informational                           C. Cardona, Ed.
+Expires: 25 April 2025                                               NTT
+                                                           D. Lopez, Ed.
+                                                          Telefonica I+D
+                                                         22 October 2024
+
+
+                A YANG module for entitlement inventory
+                       draft-ivy-entitlements-00
+
+Abstract
+
+   This document proposes a YANG module with an inventory of
+   entitlements.  The model helps manage details about entitlements,
+   such as their scope, how they’re assigned, and when they expire.  The
+   model introduces the a descriptive definition of features and use
+   restriction that can help a entitlement admistration an understanding
+   of the state of their assets and the capabilities available across
+   the network.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 25 April 2025.
+
+Copyright Notice
+
+   Copyright (c) 2024 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+
+
+
+Palmero, et al.           Expires 25 April 2025                 [Page 1]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Glosary . . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.2.  Requirements language . . . . . . . . . . . . . . . . . .   3
+     1.3.  Scope of the entitlement model  . . . . . . . . . . . . .   3
+     1.4.  Out of scope elmements of the DLMO entitlement model  . .   3
+     1.5.  Features (or maybe capabilities?) . . . . . . . . . . . .   4
+   2.  Entitlements Modeling . . . . . . . . . . . . . . . . . . . .   5
+     2.1.  Toy example for entitlement model . . . . . . . . . . . .   5
+     2.2.  What entitlements are administered/owned by the
+           organization (entitlement's inventory)? . . . . . . . . .  11
+     2.3.  What is the link between a entitlement and assets?  . . .  14
+     2.4.  What constraints do assets, under the current entitlements,
+           impose on the actors' use of the asset's features?  . . .  15
+     2.5.  How are entitlements utilized?  Which actors are using
+           features backed by entilements?  And in cases where the
+           entitlements provide limits, how close the use of those
+           features is to those limits.  . . . . . . . . . . . . . .  17
+   3.  Entitlements model  . . . . . . . . . . . . . . . . . . . . .  17
+   4.  Use cases . . . . . . . . . . . . . . . . . . . . . . . . . .  32
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  33
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .  33
+     5.2.  Informative References  . . . . . . . . . . . . . . . . .  33
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  33
+
+1.  Introduction
+
+   An entitlement grants specific holders the right to access particular
+   features of one or more assets.  The use of these features may be
+   restricted in various ways, such as by duration, usage limits, or
+   predefined conditions.  Having information a centralizaed point with
+   the state of the entitlements of the network can save time and
+   facilitate decision making.  In this document, we propose a yang
+   model that, complementing the network inventory module, can provide
+   the information the asset/entitlement adminstrator needs for this.
+
+1.1.  Glosary
+
+   TODO.  We need the distinction between licenses and entitlements.
+
+
+
+
+
+
+Palmero, et al.           Expires 25 April 2025                 [Page 2]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+1.2.  Requirements language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+1.3.  Scope of the entitlement model
+
+   The entitlement model aims to provide an inventory of entitlements.
+   This includes the entitled holders and the features to which they are
+   entitled.  Additionally, it offers information into the restrictions
+   of the operation of the different assets (network entities and
+   components).
+
+   In general, this model seeks to address the following questions:
+
+   *  What entitlements are administered/owned by the organization?
+
+   *  How are entitlements restricted to some assets and holders?
+
+   *  What entitlements are assigned or installed on each assets?
+
+   *  What constraints do the current entitlements impose in the assets
+      functionality?
+
+   *  Does the entitlement imposses any kind of global restrictions?
+      What are they?
+
+   *  What are the restrictions that each asset due to the entitlements
+      it holds?
+
+   These points will be elaborated further in section Section 2.
+   Initially, we will delineate some aspects not covered by this model,
+   followed by an explanation of features.
+
+   The model is designed with flexibility in mind, allowing for
+   expansion through the utilization of tools provided by YANG.
+
+1.4.  Out of scope elmements of the DLMO entitlement model
+
+   The realm of entitlements or licenses is inherently complex,
+   presenting challenges in creating a model that can comprehensively
+   encompass all scenarios without ambiguity.  While we attempt to
+   address various situations through examples and use cases, we
+   acknowledge that the model might not be able to cover all corner
+   cases without ambiguity.  In such cases, we recommend that
+
+
+
+Palmero, et al.           Expires 25 April 2025                 [Page 3]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+   implementations provide additional documentation to clarify potential
+   ambiguities.
+
+   The current model does not aim to serve as a catalog of licenses.
+   While it may accommodate basic scenarios, it does not aim to cover
+   the full spectrum of license characteristics, which can vary
+   significantly.  Instead, our focus is on providing a general
+   framework for describing relationships and answering the questions we
+   expose in section Section 1.3.
+
+   To clarify, here are some questions that our model does not attempt
+   to answer:
+
+   *  What are the implications of purchasing a specific entitlement?
+
+   *  Which entitlement should I acquire to get a specific feature?
+
+   *  Is license migration feasible?
+
+   *  What features will be allowed if I install an entitlement in
+      specific device?
+
+   *  Features or restrictions that depend on each user.  We are not
+      covering this in the current version of this document, but it
+      could be done if we expand the holders indentification.
+
+   We emphasize that the model primarily addresses the commercial
+   utilization of features, rather than access control.  For instance,
+   if a network device cannot be configured an arbitrary network
+   protocol (e.g.  MPLS) due to licensing restrictions, this implies
+   that the organization owning the router (the holder in this scenario)
+   is not permitted to utilize the MPLS feature.  This distinction is
+   separate from, for instance, the ability of an user to configure MPLS
+   due to access control limitations.
+
+1.5.  Features (or maybe capabilities?)
+
+   Entitlements entitle a holder to use a feature of an asset.  In some
+   cases, this feature can be simply the use of the asset itself (e.g.,
+   the use of software, the use of network equipment).  However, in
+   common cases, assets can offer a rich array of features that are
+   subject to entitlement levels.
+
+   Under the entitlement model, we do not attempt to model features
+   exhaustively.  Instead, we provide a descriptive definition of
+   features, which falls under the responsibility of the model's
+   implementers.  Also, the main philosofy behind the model is to only
+   list those features that are allowed/restricted based on the
+
+
+
+Palmero, et al.           Expires 25 April 2025                 [Page 4]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+   entitlements that the organization coutns with.  The features under
+   the entitlmeents model are not there to list all features available
+   by an asset, but only those that depend on the entitlmeent state of
+   the asset.
+
+   We'll provide examples of feature definitions in our use cases.
+
+2.  Entitlements Modeling
+
+   The model aims to provide a framework for addressing the questions
+   outlined in Section Section 1.3 across various use cases.  In this
+   section, we delve deeper into these questions, offering examples to
+   demonstrate why some are more complex than initially perceived.
+
+   The entitlement model is included in Secion Section 3.  We will
+   describe how each of the questions in Section Section 1.3 are
+   responded by the model.  First, we will introduce a toy example to
+   show how each question can be answered.
+
+2.1.  Toy example for entitlement model
+
+   As a toy example for the model we'll use the next scenario: Two
+   network elements (routers), each with a line card, and a port.  Both
+   routers are of the same type (generic_router), which requires an
+   entitlement to operate.  The router entitlement is issued for each
+   device specifically.  The line card also requires a license to
+   operate, and an extra license to allow for more than 100Gbps per port
+   and breakout functionality, but they are not issued for each router.
+   Both routers have the generic and the line card license, but one is
+   missing the port license, therefore the ports are limited.
+
+   The resulting json with these scenario is attached next:
+
+   =============== NOTE: '\' line wrapping per RFC 8792 ================
+
+   {
+     "ietf-network-inventory-entitlements:network-inventory-entitlement\
+   s": {
+       "features": {
+         "entitlement-feature-class": [
+           {
+             "entitlement-feature-class": "basic-feature",
+             "feature": [
+               {
+                 "feature-id": "acme_router_generic_operation"
+               },
+               {
+                 "feature-id": "acme_line_card_generic_operation"
+
+
+
+Palmero, et al.           Expires 25 April 2025                 [Page 5]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+               },
+               {
+                 "feature-id": "acme_port_400gbps_breakpout"
+               }
+             ]
+           }
+         ]
+       },
+       "entitlements": {
+         "entitlement": [
+           {
+             "uid": "ff31c766-1ed1-59f7-a043-030de623f1a7",
+             "state": "active",
+             "product-id": "acme_router_generic_operation",
+             "entitlement-attachements": {
+               "holders": {
+                 "organizations_names": {
+                   "organizations": [
+                     "main_organization"
+                   ]
+                 }
+               },
+               "assets": {
+                 "network-inventory": {
+                   "network-elements": [
+                     "router_one"
+                   ]
+                 }
+               }
+             }
+           },
+           {
+             "uid": "f68600ee-aaa8-55ea-be3b-d7e66c9734b1",
+             "state": "active",
+             "product-id": "general_component_license_operation",
+             "entitlement-attachements": {
+               "holders": {
+                 "organizations_names": {
+                   "organizations": [
+                     "main_organization"
+                   ]
+                 }
+               }
+             }
+           },
+           {
+             "uid": "fb8a776a-0c8e-553a-a5cc-bf97e1a949b5",
+             "state": "active",
+
+
+
+Palmero, et al.           Expires 25 April 2025                 [Page 6]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+             "product-id": "line_card_full_port_license",
+             "restrictions": {
+               "entitlment-restriction-class": [
+                 {
+                   "entitlement-restriction-class": "entitlement-global\
+   -restriction-generic",
+                   "restriction": [
+                     {
+                       "description": "Number of times the license has \
+   been use in assets",
+                       "units": "number_of_installed_licenses",
+                       "max-value": 5,
+                       "current-value": 1,
+                       "restriction-id": "restriction_0"
+                     }
+                   ]
+                 }
+               ]
+             },
+             "entitlement-attachements": {
+               "holders": {
+                 "organizations_names": {
+                   "organizations": [
+                     "main_organization"
+                   ]
+                 }
+               }
+             }
+           }
+         ]
+       }
+     },
+     "ietf-network-inventory:network-inventory": {
+       "network-elements": {
+         "network-element": [
+           {
+             "ne-id": "router_one",
+             "components": {
+               "component": [
+                 {
+                   "component-id": "acme_router_one_line_card",
+                   "class": "iana-hardware:module"
+                 },
+                 {
+                   "component-id": "acme_router_one_port_400gbps",
+                   "class": "iana-hardware:module"
+                 }
+               ]
+
+
+
+Palmero, et al.           Expires 25 April 2025                 [Page 7]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+             },
+             "ietf-network-inventory-entitlements:entitlement-informati\
+   on": {
+               "entitlements": {
+                 "entitlment": [
+                   {
+                     "entitlement-id": "ff31c766-1ed1-59f7-a043-030de62\
+   3f1a7"
+                   },
+                   {
+                     "entitlement-id": "f68600ee-aaa8-55ea-be3b-d7e66c9\
+   734b1",
+                     "component-id": "acme_router_one_line_card"
+                   },
+                   {
+                     "entitlement-id": "fb8a776a-0c8e-553a-a5cc-bf97e1a\
+   949b5",
+                     "component-id": "acme_router_one_line_card"
+                   }
+                 ]
+               },
+               "feature-information": {
+                 "feature-use": [
+                   {
+                     "feature-class": "basic-feature",
+                     "feature-id": "acme_router_generic_operation",
+                     "in-use": true,
+                     "allowed": true,
+                     "supporting-entitlements": {
+                       "entitlement": [
+                         {
+                           "entitlement-id": "ff31c766-1ed1-59f7-a043-0\
+   30de623f1a7"
+                         }
+                       ]
+                     }
+                   },
+                   {
+                     "feature-class": "basic-feature",
+                     "feature-id": "acme_line_card_generic_operation",
+                     "in-use": true,
+                     "allowed": true,
+                     "supporting-entitlements": {
+                       "entitlement": [
+                         {
+                           "entitlement-id": "f68600ee-aaa8-55ea-be3b-d\
+   7e66c9734b1"
+                         }
+
+
+
+Palmero, et al.           Expires 25 April 2025                 [Page 8]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+                       ]
+                     },
+                     "component-id": "acme_router_one_line_card"
+                   },
+                   {
+                     "feature-class": "basic-feature",
+                     "feature-id": "acme_port_400gbps_breakpout",
+                     "in-use": true,
+                     "allowed": true,
+                     "supporting-entitlements": {
+                       "entitlement": [
+                         {
+                           "entitlement-id": "fb8a776a-0c8e-553a-a5cc-b\
+   f97e1a949b5"
+                         }
+                       ]
+                     },
+                     "component-id": "acme_router_one_port_400gbps"
+                   }
+                 ]
+               }
+             }
+           },
+           {
+             "ne-id": "router_two",
+             "components": {
+               "component": [
+                 {
+                   "component-id": "acme_router_two_line_card",
+                   "class": "iana-hardware:module"
+                 },
+                 {
+                   "component-id": "acme_router_two_port_400gbps",
+                   "class": "iana-hardware:module"
+                 }
+               ]
+             },
+             "ietf-network-inventory-entitlements:entitlement-informati\
+   on": {
+               "entitlements": {
+                 "entitlment": [
+                   {
+                     "entitlement-id": "ff31c766-1ed1-59f7-a043-030de62\
+   3f1a7"
+                   },
+                   {
+                     "entitlement-id": "f68600ee-aaa8-55ea-be3b-d7e66c9\
+   734b1",
+
+
+
+Palmero, et al.           Expires 25 April 2025                 [Page 9]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+                     "component-id": "acme_router_two_line_card"
+                   }
+                 ]
+               },
+               "feature-information": {
+                 "feature-use": [
+                   {
+                     "feature-class": "basic-feature",
+                     "feature-id": "acme_router_generic_operation",
+                     "in-use": true,
+                     "allowed": true,
+                     "supporting-entitlements": {
+                       "entitlement": [
+                         {
+                           "entitlement-id": "ff31c766-1ed1-59f7-a043-0\
+   30de623f1a7"
+                         }
+                       ]
+                     }
+                   },
+                   {
+                     "feature-class": "basic-feature",
+                     "feature-id": "acme_line_card_generic_operation",
+                     "in-use": true,
+                     "allowed": true,
+                     "supporting-entitlements": {
+                       "entitlement": [
+                         {
+                           "entitlement-id": "f68600ee-aaa8-55ea-be3b-d\
+   7e66c9734b1"
+                         }
+                       ]
+                     },
+                     "component-id": "acme_router_two_line_card"
+                   },
+                   {
+                     "feature-class": "basic-feature",
+                     "feature-id": "acme_port_400gbps_breakpout",
+                     "in-use": false,
+                     "allowed": false,
+                     "supporting-entitlements": {
+                       "entitlement": []
+                     },
+                     "component-id": "acme_router_two_port_400gbps"
+                   }
+                 ]
+               },
+               "asset-restrictions": {
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 10]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+                 "asset-restriction-class": [
+                   {
+                     "asset-restriction-class": "entitlement-asset-rest\
+   riction-basic",
+                     "asset-restriction": [
+                       {
+                         "description": "Bandwidth limit",
+                         "units": "Gbps",
+                         "max-value": 100,
+                         "current-value": 79,
+                         "component-id": "acme_router_two_port_400gbps",
+                         "asset-restriction-id": "restriction_0"
+                       }
+                     ]
+                   }
+                 ]
+               }
+             }
+           }
+         ]
+       }
+     }
+   }
+
+          Figure 1: Toy scenario for entitlement model description
+
+2.2.  What entitlements are administered/owned by the organization
+      (entitlement's inventory)?
+
+   The model should facilitate listing all entitlements associated with
+   a set of assets under the same asset administration.  In scenarios
+   where entitlements are tied to assets, the asset itself could provide
+   this information.  Alternatively, providers may support something
+   similar to a license server, which could house comprehensive
+   information regarding an organization's licenses.
+
+   Within the model, all entitlements and features are listed directly
+   under the network-inventory-entitlements container of the model.
+
+   Just by listing the entitlements, and provide their basic
+   information, a netconf client will be able to retrieve basic
+   inventory information of existing entitlements, without processing
+   the more complex relationships that we will describe in the next
+   sections.
+
+   Note that the model uses lists based on classes on multiple parts to
+   be able to extend functionality.  We will provide examples of how
+   this can be done in posterior releases of this document.
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 11]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+   The entitlements and features list do not specify which the assets
+   (network elments or components) are actually assigned the
+   entitlements, either through an installation or a similar operation.
+   For this, we augment the network elements form the network-inventory
+   [I-D.draft-ietf-ivy-network-inventory-yang-03] model with a new
+   container called entitlement-information.  This container hold
+   information of the state of entitlmenets in the asset.
+
+   The entiltment container holds a container called entitlement-
+   attachements which relates how the entitlement is COMMERCIALLY linked
+   to holders or assets.  Note that there is a difference between an
+   entilement being attached to an asset and an entilement being
+   installed in the asset.  In the former, we mean that the license was
+   issued only for one (or more) assets.  Some licenses actually can be
+   open but have a limited number of installation, just as we have in
+   our toy example.  Other licenses might be openly contraint to
+   geography localtion.  We are not deailing with these complex cases
+   now, but the container can be expanded for this in the future.
+
+   In our toy example, we can extract the information in a single table.
+   We show the summary in the next figure.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 12]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+   =============== NOTE: '\' line wrapping per RFC 8792 ================
+
+   Entry 0:
+     name: ent_acme_router_generic_operation_one
+     product_id: acme_router_generic_operation
+     state: active
+     attached_assets: router_one
+     assets_where_is_installed: router_one,router_two
+     restrictions_apply: False
+
+   Entry 1:
+     name: ent_acme_line_card_generic_operation
+     product_id: general_component_license_operation
+     state: active
+     attached_assets:
+     assets_where_is_installed: router_one-acme_router_one_line_card,ro\
+   uter_two-
+       acme_router_two_line_card
+     restrictions_apply: False
+
+   Entry 2:
+     name: ent_acme_line_card_full_ports
+     product_id: line_card_full_port_license
+     state: active
+     attached_assets:
+     assets_where_is_installed: router_one-acme_router_one_line_card
+     restrictions_apply: True
+
+                 Figure 2: Entitlement report for toy case
+
+   Entitlements might be listed by multiple assets.  For instance, a
+   license server, functioning as an asset, might list an entitlement,
+   while the asset entitled by the license might also list it.  Proper
+   identification of entitlements is imperative to ensure consistency
+   across systems, enabling monitoring systems to recognize when
+   multiple assets list the same entitlement.
+
+   Furthermore, there are cases where an authorized asset might not be
+   aware of the covering license.  Consider the scenario of a site
+   license, wherein any device under the site may utilize a feature
+   without explicit knowledge of the covering license.  In such cases,
+   asset awareness relies on management controls or a service license
+   capable of listing it.
+
+
+
+
+
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 13]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+   The model accommodates listing entitlements acquired by the
+   organization but not yet applied or utilized by any actor/asset.  For
+   these "pending" entitlements, logistical constraints may arise in
+   informing their existence, as there must be at least one element
+   exporting the model that is aware of their existence.
+
+   Some entitlements are inherently associated with an holder, such as
+   organization or an user.  For example, a software license might be
+   directly attached to a user.  Also, the use of a network device might
+   come with a basic license provided solely to an organization.  Some
+   entitlements could be assigned to a more abstract description of
+   holders, such as people under a juristiction a geographical area.
+   The model contains basic information about this, but it can be
+   extended in the future to be more descriptive.
+
+2.3.  What is the link between a entitlement and assets?
+
+   Entitlements and assets are linked in the model in two ways.
+   Entitlemenets might be "attached" to assets, and assets include (or
+   have installed) entitlements.  The former is included under the
+   network-inventory-entitlements list container, while the former is
+   included as an augmenetation in the network element.
+
+   When an asset lists an entitlement, it means that the entitlement is
+   installed in the asset.  An entitlement that is not listed by any
+   asset means that is not being used (even if it is attached to an
+   asset, as we will see later).
+
+   Attaching an entitlement to one or multiple asset means that the
+   entitlement is exclusively used by that asset.  However, this is not
+   mandatory and there are many licenses that are open and can be
+   installed at any asset of certain type.
+
+   While attachment is optional, the model should be capable of
+   expressing attachment in various scenarios.  The model can be
+   expanded to list to which assets an entitlement is aimed for, when
+   this link is more vague, such as a site license (e.g., assets located
+   in a specific site), or more open licenses (e.g., free software for
+   all users subscribed to a streaming platform).
+
+   It's important to note that the current model does not provide
+   information on whether an entitlement can be reassigned to other
+   devices (e.g., fixed or floating license).  Such scenarios fall under
+   the "what if" category, which is not covered by this model.
+
+   The list of attached assets, and the assets where the entitlements
+   are installed is included already in the figure Figure 2.
+
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 14]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+2.4.  What constraints do assets, under the current entitlements, impose
+      on the actors' use of the asset's features?
+
+   Assets provide various features, which may be restricted based on the
+   availability of proper entitlements.  A entitlement manager might be
+   interested in the features that are not available to use on the
+   assets, and the features that are available.
+
+   The model includes this information on the entitlement-information/
+   feature-information/feature-use which is the entitlement-model adds
+   to the network-elements from the network inventory model..
+
+   An entitlement grants permission to access specific features
+   associated with an asset.  However, in some cases, there are
+   limitations or restrictions on the use of these features. it's
+   essential for the model to provide information on the status of the
+   entitlement, particularly if it is at risk of being infringed upon.
+   This can help organizations stay informed about their entitlement
+   usage and take necessary actions to prevent potential violations or
+   overuse of features.
+
+   All the information related to how an asset provides a feature to
+   actors is included under the feature container wihtin the asset
+   class, under the entitlements-info container.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 15]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+   Entry 0:
+     feature_name: acme_line_card_generic_operation
+     allowed: True
+     in_use: True
+     supporting_entitlements: ent_acme_line_card_generic_operation
+     restrictions_apply: False
+     asset: router_one-acme_router_one_line_card
+
+   Entry 1:
+     feature_name: acme_line_card_generic_operation
+     allowed: True
+     in_use: True
+     supporting_entitlements: ent_acme_line_card_generic_operation
+     restrictions_apply: False
+     asset: router_two-acme_router_two_line_card
+
+   Entry 2:
+     feature_name: acme_port_400gbps_breakpout
+     allowed: True
+     in_use: True
+     supporting_entitlements: ent_acme_line_card_full_ports
+     restrictions_apply: False
+     asset: router_one-acme_router_one_port_400gbps
+
+   Entry 3:
+     feature_name: acme_port_400gbps_breakpout
+     allowed: False
+     in_use: False
+     supporting_entitlements:
+     restrictions_apply: False
+     asset: router_two-acme_router_two_port_400gbps
+
+   Entry 4:
+     feature_name: acme_router_generic_operation
+     allowed: True
+     in_use: True
+     supporting_entitlements: ent_acme_router_generic_operation_one
+     restrictions_apply: False
+     asset: router_one
+
+   Entry 5:
+     feature_name: acme_router_generic_operation
+     allowed: True
+     in_use: True
+     supporting_entitlements: ent_acme_router_generic_operation_one
+     restrictions_apply: False
+     asset: router_two
+
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 16]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+                   Figure 3: Features report for toy case
+
+2.5.  How are entitlements utilized?  Which actors are using features
+      backed by entilements?  And in cases where the entitlements
+      provide limits, how close the use of those features is to those
+      limits.
+
+   Entry 0:
+     description: Bandwidth limit
+     units: Gbps
+     max-value: 100
+     current-value: 79
+     asset: router_two-acme_router_two_port_400gbps
+
+                 Figure 4: Restrictions report for toy case
+
+3.  Entitlements model
+
+   Here is the tree for the entitlement model.
+
+   =============== NOTE: '\' line wrapping per RFC 8792 ================
+
+   module: ietf-network-inventory-entitlements
+     +--rw network-inventory-entitlements
+        +--rw features
+        |  +--rw entitlement-feature-class* [entitlement-feature-class]
+        |     +--rw entitlement-feature-class    identityref
+        |     +--rw feature* [feature-id]
+        |        +--rw feature-id                      string
+        |        +--rw extended-feature-description?   string
+        +--rw entitlements
+           +--rw entitlement* [uid]
+              +--rw uid                         string
+              +--rw product-id?                 string
+              +--rw state?                      entitlement-state-t
+              +--rw renewal-profile
+              |  +--rw activation-date?   yang:date-and-time
+              |  +--rw expiration-date?   yang:date-and-time
+              +--rw restrictions
+              |  +--rw entitlment-restriction-class* [entitlement-restr\
+   iction-class]
+              |     +--rw entitlement-restriction-class    identityref
+              |     +--rw restriction* [restriction-id]
+              |        +--rw restriction-id    string
+              |        +--rw description?      string
+              |        +--rw units?            string
+              |        +--rw max-value?        int32
+              |        +--rw current-value?    int32
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 17]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+              +--rw capabilities
+              |  +--rw capability-class* [capability-class]
+              |     +--rw capability-class    identityref
+              |     +--rw capability* [capability-id]
+              |        +--rw capability-id           string
+              |        +--rw feature-class?          -> /network-invent\
+   ory-entitlements/features/entitlement-feature-class/entitlement-feat\
+   ure-class
+              |        +--rw feature-id?             -> /network-invent\
+   ory-entitlements/features/entitlement-feature-class[entitlement-feat\
+   ure-class=current()/../feature-class]/feature/feature-id
+              |        +--rw resource-description?   string
+              |        +--rw resource-units?         string
+              |        +--rw resource-amount?        int32
+              +--rw parent-entitlement-uid?     -> ../../entitlement/uid
+              +--rw entitlement-attachements
+                 +--rw universal-access?   boolean
+                 +--rw holders!
+                 |  +--rw organizations_names
+                 |  |  +--rw organizations*   string
+                 |  +--rw users_names
+                 |     +--rw users*   string
+                 +--rw assets
+                    +--rw network-inventory
+                       +--rw network-elements*   string
+                       +--rw components
+                          +--rw component* [network-element component-i\
+   d]
+                             +--rw network-element    string
+                             +--rw component-id       string
+
+     augment /nwi:network-inventory/nwi:network-elements/nwi:network-el\
+   ement:
+       +--rw entitlement-information
+          +--rw entitlements
+          |  +--rw entitlment* [entitlement-id]
+          |     +--rw entitlement-id    -> /network-inventory-entitleme\
+   nts/entitlements/entitlement/uid
+          |     +--rw component-id?     -> ../../../../nwi:components/c\
+   omponent/component-id
+          +--rw feature-information
+          |  +--rw feature-use* [feature-class feature-id]
+          |     +--rw feature-class              -> /network-inventory-\
+   entitlements/features/entitlement-feature-class/entitlement-feature-\
+   class
+          |     +--rw feature-id                 -> /network-inventory-\
+   entitlements/features/entitlement-feature-class[entitlement-feature-\
+   class=current()/../feature-class]/feature/feature-id
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 18]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+          |     +--rw component-id?              -> ../../../../nwi:com\
+   ponents/component/component-id
+          |     +--rw supporting-entitlements
+          |     |  +--rw entitlement* [entitlement-id]
+          |     |     +--rw entitlement-id    -> ../../../../../entitle\
+   ments/entitlment/entitlement-id
+          |     +--rw allowed?                   boolean
+          |     +--rw in-use?                    boolean
+          +--rw asset-restrictions
+             +--rw asset-restriction-class* [asset-restriction-class]
+                +--rw asset-restriction-class    identityref
+                +--rw asset-restriction* [asset-restriction-id]
+                   +--rw component-id?           -> ../../../../../nwi:\
+   components/component/component-id
+                   +--rw asset-restriction-id    string
+                   +--rw description?            string
+                   +--rw resource-name?          string
+                   +--rw units?                  string
+                   +--rw max-value?              int32
+                   +--rw current-value?          int32
+                   +--rw feature-class?          -> ../../../../feature\
+   -information/feature-use/feature-class
+                   +--rw feature-id?             -> ../../../../feature\
+   -information/feature-use[feature-class=current()/../feature-class]/f\
+   eature-id
+
+                    Figure 5: Tree of entitlement model
+
+   The full entitlement model comes in the next figure.
+
+   =============== NOTE: '\\' line wrapping per RFC 8792 ===============
+
+   module ietf-network-inventory-entitlements-features {
+     yang-version 1.1;
+     namespace "urn:ietf:params:xml:ns:yang:ietf-network-inventory-enti\
+   \tlements-features";
+     prefix nwie;
+
+     import ietf-yang-types {
+       prefix yang;
+     }
+     import ietf-network-inventory {
+       prefix nwi;
+       reference
+         "RFCxxxx: IETF Network Inventory";
+     }
+
+     organization
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 19]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+       "IETF IVY Working Group";
+     contact
+       "WG Web:   <https://datatracker.ietf.org/wg/ivy/>
+        WG List:  <mailto:inventory-yang@ietf.org>
+
+        Editor:   Marisol Palmero
+                  <a>
+
+        Editor:   Camilo Cardona
+                  <>
+
+        Editor:   Diego
+                  <>";
+     description
+       "This module defines a base model for retrieving network
+        inventory.
+
+        The model fully conforms to the Network Management
+        Datastore Architecture (NMDA).
+
+        Copyright (c) 2024 IETF Trust and the persons
+        identified as authors of the code.  All rights reserved.
+
+        Redistribution and use in source and binary forms, with or
+        without modification, is permitted pursuant to, and subject
+        to the license terms contained in, the Revised BSD License
+        set forth in Section 4.c of the IETF Trust's Legal Provisions
+        Relating to IETF Documents
+        (https://trustee.ietf.org/license-info).
+
+        This version of this YANG module is part of RFC XXXX; see
+        the RFC itself for full legal notices.
+
+        The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
+        NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
+        'MAY', and 'OPTIONAL' in this document are to be interpreted as
+        described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
+        they appear in all capitals, as shown here.";
+
+     // RFC Ed.: update the date below with the date of RFC publication
+     // and remove this note.
+
+     revision 2024-04-09 {
+       description
+         "Initial version";
+       reference
+         "RFC XXXX:.";
+     }
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 20]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+     identity entitlement-capability-description {
+       description
+         "Base identity for classes of LMO. Provides just an id, and a";
+     }
+
+     identity entitlement-global-restriction {
+       description
+         "Base identify for restriction. It does not provide anything m\
+   \eaninful.";
+     }
+
+     identity entitlement-feature {
+       description
+         "Base identity for classes of LMO. Provides just an id, and a
+          extended description";
+     }
+
+     identity basic-feature {
+       base entitlement-feature;
+       description
+         "Base identity for classes of LMO. Provides just an id, and a
+          extended description";
+     }
+
+     typedef entitlement-state-t {
+       type enumeration {
+         enum inactive {
+           description
+             "Inactive State";
+         }
+         enum active {
+           description
+             "Active State";
+         }
+         enum unknown {
+           description
+             "Unknown State";
+         }
+       }
+       description
+         "Entitlement State Type";
+     }
+
+     identity test {
+       base nwi:non-hardware-component-class;
+     }
+
+     container network-inventory-entitlements {
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 21]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+       container features {
+         list entitlement-feature-class {
+           description
+             "Optional list of features known by this data server. ";
+           key "entitlement-feature-class";
+           leaf entitlement-feature-class {
+             type identityref {
+               base entitlement-feature;
+             }
+             must "derived-from-or-self(current(), "
+                + " 'entitlement-feature')";
+           }
+           list feature {
+             key "feature-id";
+             leaf feature-id {
+               type string;
+               description
+                 "Feature ID.";
+             }
+             leaf extended-feature-description {
+               type string;
+               description
+                 "Extended feature description of the feature, if neede\
+   \d";
+             }
+           }
+         }
+       }
+       container entitlements {
+         list entitlement {
+           key "uid";
+           description
+             "The container includes attributes for entitlements";
+           leaf uid {
+             type string;
+             description
+               "Unique Entitlement Identifier";
+           }
+           leaf product-id {
+             type string;
+             description
+               "An optional product id for the entitlemnet, if one exis\
+   \ts";
+           }
+           leaf state {
+             type entitlement-state-t;
+             description
+               "Entitlement state; e.g., active, inactive, or unknown";
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 22]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+           }
+           container renewal-profile {
+             description
+               "Profile of entitlement renewal status and information";
+             leaf activation-date {
+               type yang:date-and-time;
+               description
+                 "Activation Date";
+             }
+             leaf expiration-date {
+               type yang:date-and-time;
+               description
+                 "Expiration Date";
+             }
+           }
+           container restrictions {
+             description
+               "Global entitlement usage restrictions";
+             list entitlment-restriction-class {
+               key "entitlement-restriction-class";
+               leaf entitlement-restriction-class {
+                 type identityref {
+                   base entitlement-global-restriction;
+                 }
+                 must "derived-from-or-self(current(), "
+                    + " 'entitlement-global-restriction')";
+               }
+               list restriction {
+                 key "restriction-id";
+                 leaf restriction-id {
+                   description
+                     "A string that uniquelly identifies the restrictio\
+   \ns. It might not be meaninfully.";
+                   type string;
+                 }
+               }
+             }
+           }
+           // TODO:  We could have a list of features the entitlement c\
+   \overs, but this would be
+           // only for description purposes since an entitlement is onl\
+   \y meaningful when
+           // allowing a feature under an asset
+           container capabilities {
+             description
+               "Descriptive list of features the entitlement grants";
+             list capability-class {
+               key "capability-class";
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 23]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+               leaf capability-class {
+                 type identityref {
+                   base entitlement-capability-description;
+                 }
+                 must "derived-from-or-self(current(), "
+                    + " 'entitlement-capability-description')";
+                 description
+                   "Feature type";
+               }
+               list capability {
+                 key "capability-id";
+                 leaf capability-id {
+                   description
+                     "A string that uniquelly identifies the restrictio\
+   \ns. It might not be meaninfully.";
+                   type string;
+                 }
+               }
+             }
+           }
+
+         leaf parent-entitlement-uid {
+           type leafref {
+             path "../../entitlement/uid";
+           }
+           must '. != current()/../../entitlement/uid' {
+             error-message "An entitlement cannot be its own parent.";
+           }
+           description
+             "Some entitlements are delivered in 'packages'. The parent\
+   \-entitlement relationship aims
+              at covering this case. If the package has an id, it can b\
+   \e modeled as an entitlement
+              covering multiple ones. This can also cover the case of a\
+   \n entilement that can
+              be divided in multiple parts";
+         }
+         container entitlement-attachements {
+           description
+             "An entilement entitles an entity to the use of a feature \
+   \under an
+              asset.";
+
+           leaf universal-access {
+             type boolean;
+             default "false";
+             description "Optional flag to signal that the entitlment i\
+   \s not attached to any holder, that is, the permissions granted are \
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 24]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+   \for everybody.";
+           }
+
+           container holders {
+
+             presence "The holders container should be created only whe\
+   \n the data server
+             can provide information of the holder of the entitlement.";
+
+             must "not(../universal-access = 'true')" {
+               error-message "The 'holders' container cannot exist when\
+   \ universal-access is set.";
+             }
+
+             description
+               "The entities to which the entilements grants permissios\
+   \n to.
+                There can be multiple of them.
+                The container SHOULD not exist if the data server does \
+   \not known
+                of the holders of the entitlement. An empty holders SHO\
+   \ULD be avoided, instead
+                the universal-access flag should be set.
+                It might be expanded to cover selection cases e.g. all \
+   \users in
+                a special country.";
+
+             container organizations_names {
+               leaf-list organizations {
+                 type string;
+               }
+             }
+             container users_names {
+               leaf-list users {
+                 type string;
+               }
+             }
+             // We could expand this to more generic selections of users
+             // or organizations, or in general add a flexible way of e\
+   \xpanding it
+             // via keying by a instance
+           }
+           container assets {
+             container network-inventory {
+               leaf-list network-elements {
+                 type string;
+               }
+               container components {
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 25]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+                 list component {
+                   key "network-element component-id";
+                   leaf network-element {
+                     type string;
+                   }
+                   leaf component-id {
+                     type string;
+                   }
+
+                 }
+               }
+             }
+             // We could expand this to more generic selections of users
+             // or organizations, or in general add a flexible way of e\
+   \xpanding it
+             // via keying by a instance
+           }
+           // We could have other container with more descriptive set o\
+   \f assets
+           // such as "all laptops in school Y (site license)"
+
+         }
+         }
+       }
+     }
+
+     // Let us define the entitlement capabilities for feature and reso\
+   \ures
+     // An entitlmeent capability will add a feature
+     // We leave open many things here, that's why iti s only descripti\
+   \ve
+
+     identity entitlement-capability-feature-description {
+       base entitlement-capability-description;
+     }
+
+     augment "/network-inventory-entitlements/entitlements/entitlement/\
+   \capabilities/capability-class/capability" {
+       when "derived-from-or-self(../capability-class, "
+          + " 'entitlement-capability-feature-description')";
+       leaf feature-class {
+         type leafref {
+           path "/network-inventory-entitlements/features/entitlement-f\
+   \eature-class/entitlement-feature-class";
+         }
+         description
+           "Class of feature to enable";
+       }
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 26]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+       leaf feature-id {
+         type leafref {
+           path "/network-inventory-entitlements/features/entitlement-f\
+   \eature-class[entitlement-feature-class="
+              + "current()/../feature-class]/feature/feature-id";
+         }
+         description
+           "Feature that this entitlement enables on the asset";
+       }
+     }
+
+     // A resource capability will extend the resources of an asset
+     // here we dont provide much context, it is just for simple cases
+
+     identity entitlement-capability-resource-description {
+       base entitlement-capability-description;
+     }
+
+     augment "/network-inventory-entitlements/entitlements/entitlement/\
+   \capabilities/capability-class/capability" {
+       when "derived-from-or-self(../capability-class, "
+          + " 'entitlement-capability-resource-description')";
+       leaf resource-description {
+         type string;
+         description
+           "Description of the resource capability";
+       }
+       leaf resource-units {
+         type string;
+       }
+       leaf resource-amount {
+         type int32;
+       }
+     }
+
+     identity entitlement-global-restriction-generic {
+       description
+         "A generic restriction with a maximum of a resource, and its c\
+   \urrent value.";
+       base entitlement-global-restriction;
+     }
+
+     augment "/network-inventory-entitlements/entitlements/entitlement/\
+   \restrictions/entitlment-restriction-class/restriction" {
+       when "derived-from-or-self(../entitlement-restriction-class, "
+          + "'entitlement-global-restriction-generic')";
+       leaf description {
+         type string;
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 27]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+         description
+           "Description of the resource capability";
+       }
+       leaf units {
+         type string;
+       }
+       leaf max-value {
+         type int32;
+       }
+       leaf current-value {
+         type int32;
+       }
+     }
+
+     identity entitlement-asset-restriction {
+       description "Restriction for an asset";
+     }
+
+
+     augment "/nwi:network-inventory/nwi:network-elements/nwi:network-e\
+   \lement" {
+       description
+         "Aguments a component with entitlement information";
+       container entitlement-information {
+         description
+           "Containing holding information about entitlements and the
+            features/capabilities they grant";
+         container entitlements {
+           description
+             "List of entitlements installed in the asset";
+           list entitlment {
+             description
+               "Entitlement installed in the asset.";
+             key "entitlement-id";
+             leaf entitlement-id {
+               type leafref {
+                 path "/network-inventory-entitlements/entitlements/ent\
+   \itlement/uid";
+               }
+             }
+
+               leaf component-id {
+                 description "If the entitlement is specificly for a  c\
+   \omponent of the
+                 network-element, specify it";
+                 type leafref {
+                   path "../../../../nwi:components/nwi:component/nwi:c\
+   \omponent-id";
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 28]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+                 }
+               }
+           }
+         }
+         container feature-information {
+           list feature-use {
+             key "feature-class feature-id";
+             description "Contains information of the use of a feature \
+   \within an asset";
+             leaf feature-class {
+               type leafref {
+                 path "/network-inventory-entitlements/features/entitle\
+   \ment-feature-class/entitlement-feature-class";
+               }
+               description
+                 "Class of feature to enable";
+             }
+             leaf feature-id {
+               type leafref {
+                 path "/network-inventory-entitlements/features/entitle\
+   \ment-feature-class[entitlement-feature-class="
+                    + "current()/../feature-class]/feature/feature-id";
+               }
+               description
+                 "Feature that this entitlement enables on the asset";
+             }
+
+               leaf component-id {
+                 description "If the restriction is for a specific comp\
+   \onent of the
+                 network-element, specify it";
+                 type leafref {
+                   path "../../../../nwi:components/nwi:component/nwi:c\
+   \omponent-id";
+                 }
+               }
+
+             container supporting-entitlements {
+               description
+                 "An optional list of entitlements allowing the use of \
+   \the feature";
+               list entitlement {
+                 key "entitlement-id";
+                 description
+                   "Subfeature ID";
+                 leaf entitlement-id {
+                   type leafref {
+                     path "../../../../../entitlements/entitlment/entit\
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 29]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+   \lement-id";
+                   }
+                   description
+                     "Reference to almo-class";
+                 }
+               }
+             }
+             leaf allowed {
+               type boolean;
+               description
+                 "Whther the level of usage of the feature will leave it
+                  to infrigement if the entilement in entitlements is r\
+   \emoved";
+             }
+             leaf in-use {
+               type boolean;
+               description
+                 "Optional argument.Whether the feature use is infrigin\
+   \g its entilement level.
+                  It means the feature is in use iwthout an entitlement\
+   \, or going over a level.
+                  It should explicitly be set if the asset can report. \
+   \not reporting this
+                  value means its value is not determined by the asset";
+             }
+           }
+         }
+
+         container asset-restrictions {
+           list asset-restriction-class {
+             key "asset-restriction-class";
+             leaf  asset-restriction-class {
+               type identityref {
+                 base entitlement-asset-restriction;
+               }
+               must "derived-from-or-self(current(), "
+                  + " 'entitlement-asset-restriction')";
+             }
+
+             list asset-restriction {
+               key "asset-restriction-id";
+
+               leaf component-id {
+                 description "If the feature is applied to a specific c\
+   \omponent of the
+                 network-element, specify it";
+                 type leafref {
+                   path "../../../../../nwi:components/nwi:component/nw\
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 30]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+   \i:component-id";
+                 }
+               }
+
+               leaf asset-restriction-id {
+                 type string;
+                 description "Restriction id. It can be meaningless";
+               }
+
+               leaf description {
+                 type string;
+                 description "A description of the restriction. It shou\
+   \ld quickly communicate what's being restricted in the asset.";
+               }
+
+             }
+
+
+           }
+         }
+
+       }
+     }
+
+     identity entitlement-asset-restriction-basic {
+       description "Restriction for an asset based on a feature";
+       base entitlement-asset-restriction;
+     }
+
+     augment "/nwi:network-inventory/nwi:network-elements/nwi:network-e\
+   \lement/"
+           + "entitlement-information/asset-restrictions/asset-restrict\
+   \ion-class/asset-restriction" {
+       when "derived-from-or-self(../asset-restriction-class, "
+          + " 'entitlement-asset-restriction-basic')";
+
+         leaf resource-name {
+           type string;
+         }
+
+         leaf units {
+           type string;
+         }
+
+         leaf max-value {
+           type int32;
+         }
+
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 31]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+         leaf current-value {
+           type int32;
+         }
+
+       }
+
+     identity entitlement-asset-restriction-feature {
+       description "Restriction for an asset based on a feature";
+       base entitlement-asset-restriction-basic;
+     }
+
+     augment "/nwi:network-inventory/nwi:network-elements/nwi:network-e\
+   \lement/"
+           + "entitlement-information/asset-restrictions/asset-restrict\
+   \ion-class/asset-restriction" {
+       when "derived-from-or-self(../asset-restriction-class, "
+          + " 'entitlement-asset-restriction-feature')";
+
+         leaf feature-class {
+           type leafref {
+             path "../../../../feature-information/feature-use/feature-\
+   \class";
+           }
+           description
+             "Class of feature to enable";
+         }
+         leaf feature-id {
+           type leafref {
+             path "../../../../feature-information/feature-use[feature-\
+   \class="
+             + "current()/../feature-class]/feature-id";
+           }
+           description
+             "Feature that this entitlement enables on the asset";
+         }
+
+       }
+
+   }
+
+                    Figure 6: Complete entitlement model
+
+4.  Use cases
+
+   In this section we will describe use cases, an example of how they
+   could be modelled by the model, and show how each of the questions
+   that we have explored in this draft can be answered by the model.
+
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 32]
+
+Internet-Draft            entitlement inventory             October 2024
+
+
+   TODO in next versions.
+
+5.  References
+
+5.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+5.2.  Informative References
+
+   [I-D.draft-ietf-ivy-network-inventory-yang-03]
+              Yu, C., Belotti, S., Bouquier, J., Peruzzini, F., and P.
+              Bedard, "A YANG Data Model for Network Inventory", Work in
+              Progress, Internet-Draft, draft-ietf-ivy-network-
+              inventory-yang-03, 7 July 2024,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-ivy-
+              network-inventory-yang-03>.
+
+Authors' Addresses
+
+   Marisol Palmero (editor)
+   Cisco Systems
+   Email: mpalmero@cisco.com
+
+
+   Camilo Cardona (editor)
+   NTT
+   Email: camilo@gin.ntt.net
+
+
+   Diego Lopez (editor)
+   Telefonica I+D
+   Email: diego.r.lopez@telefonica.com
+
+
+
+
+
+
+
+
+
+
+
+Palmero, et al.           Expires 25 April 2025                [Page 33]

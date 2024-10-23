@@ -1,0 +1,634 @@
+=============== NOTE: '\\' line wrapping per RFC 8792 ===============
+
+module ietf-network-inventory-entitlements-features {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-network-inventory-enti\
+\tlements-features";
+  prefix nwie;
+
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ietf-network-inventory {
+    prefix nwi;
+    reference
+      "RFCxxxx: IETF Network Inventory";
+  }
+
+  organization
+    "IETF IVY Working Group";
+  contact
+    "WG Web:   <https://datatracker.ietf.org/wg/ivy/>
+     WG List:  <mailto:inventory-yang@ietf.org>
+
+     Editor:   Marisol Palmero
+               <a>
+
+     Editor:   Camilo Cardona
+               <>
+
+     Editor:   Diego
+               <>";
+  description
+    "This module defines a base model for retrieving network
+     inventory.
+
+     The model fully conforms to the Network Management
+     Datastore Architecture (NMDA).
+
+     Copyright (c) 2024 IETF Trust and the persons
+     identified as authors of the code.  All rights reserved.
+
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject
+     to the license terms contained in, the Revised BSD License
+     set forth in Section 4.c of the IETF Trust's Legal Provisions
+     Relating to IETF Documents
+     (https://trustee.ietf.org/license-info).
+
+     This version of this YANG module is part of RFC XXXX; see
+     the RFC itself for full legal notices.
+
+     The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
+     NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
+     'MAY', and 'OPTIONAL' in this document are to be interpreted as
+     described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
+     they appear in all capitals, as shown here.";
+
+  // RFC Ed.: update the date below with the date of RFC publication
+  // and remove this note.
+
+  revision 2024-04-09 {
+    description
+      "Initial version";
+    reference
+      "RFC XXXX:.";
+  }
+
+  identity entitlement-capability-description {
+    description
+      "Base identity for classes of LMO. Provides just an id, and a";
+  }
+
+  identity entitlement-global-restriction {
+    description
+      "Base identify for restriction. It does not provide anything m\
+\eaninful.";
+  }
+
+  identity entitlement-feature {
+    description
+      "Base identity for classes of LMO. Provides just an id, and a
+       extended description";
+  }
+
+  identity basic-feature {
+    base entitlement-feature;
+    description
+      "Base identity for classes of LMO. Provides just an id, and a
+       extended description";
+  }
+
+  typedef entitlement-state-t {
+    type enumeration {
+      enum inactive {
+        description
+          "Inactive State";
+      }
+      enum active {
+        description
+          "Active State";
+      }
+      enum unknown {
+        description
+          "Unknown State";
+      }
+    }
+    description
+      "Entitlement State Type";
+  }
+
+  identity test {
+    base nwi:non-hardware-component-class;
+  }
+
+  container network-inventory-entitlements {
+    container features {
+      list entitlement-feature-class {
+        description
+          "Optional list of features known by this data server. ";
+        key "entitlement-feature-class";
+        leaf entitlement-feature-class {
+          type identityref {
+            base entitlement-feature;
+          }
+          must "derived-from-or-self(current(), "
+             + " 'entitlement-feature')";
+        }
+        list feature {
+          key "feature-id";
+          leaf feature-id {
+            type string;
+            description
+              "Feature ID.";
+          }
+          leaf extended-feature-description {
+            type string;
+            description
+              "Extended feature description of the feature, if neede\
+\d";
+          }
+        }
+      }
+    }
+    container entitlements {
+      list entitlement {
+        key "uid";
+        description
+          "The container includes attributes for entitlements";
+        leaf uid {
+          type string;
+          description
+            "Unique Entitlement Identifier";
+        }
+        leaf product-id {
+          type string;
+          description
+            "An optional product id for the entitlemnet, if one exis\
+\ts";
+        }
+        leaf state {
+          type entitlement-state-t;
+          description
+            "Entitlement state; e.g., active, inactive, or unknown";
+        }
+        container renewal-profile {
+          description
+            "Profile of entitlement renewal status and information";
+          leaf activation-date {
+            type yang:date-and-time;
+            description
+              "Activation Date";
+          }
+          leaf expiration-date {
+            type yang:date-and-time;
+            description
+              "Expiration Date";
+          }
+        }
+        container restrictions {
+          description
+            "Global entitlement usage restrictions";
+          list entitlment-restriction-class {
+            key "entitlement-restriction-class";
+            leaf entitlement-restriction-class {
+              type identityref {
+                base entitlement-global-restriction;
+              }
+              must "derived-from-or-self(current(), "
+                 + " 'entitlement-global-restriction')";
+            }
+            list restriction {
+              key "restriction-id";
+              leaf restriction-id {
+                description
+                  "A string that uniquelly identifies the restrictio\
+\ns. It might not be meaninfully.";
+                type string;
+              }
+            }
+          }
+        }
+        // TODO:  We could have a list of features the entitlement c\
+\overs, but this would be 
+        // only for description purposes since an entitlement is onl\
+\y meaningful when 
+        // allowing a feature under an asset
+        container capabilities {
+          description
+            "Descriptive list of features the entitlement grants";
+          list capability-class {
+            key "capability-class";
+            leaf capability-class {
+              type identityref {
+                base entitlement-capability-description;
+              }
+              must "derived-from-or-self(current(), "
+                 + " 'entitlement-capability-description')";
+              description
+                "Feature type";
+            }
+            list capability {
+              key "capability-id";
+              leaf capability-id {
+                description
+                  "A string that uniquelly identifies the restrictio\
+\ns. It might not be meaninfully.";
+                type string;
+              }
+            }
+          }
+        }
+
+      leaf parent-entitlement-uid {
+        type leafref {
+          path "../../entitlement/uid";
+        }
+        must '. != current()/../../entitlement/uid' {
+          error-message "An entitlement cannot be its own parent.";
+        }
+        description
+          "Some entitlements are delivered in 'packages'. The parent\
+\-entitlement relationship aims
+           at covering this case. If the package has an id, it can b\
+\e modeled as an entitlement
+           covering multiple ones. This can also cover the case of a\
+\n entilement that can 
+           be divided in multiple parts";
+      }
+      container entitlement-attachements {
+        description
+          "An entilement entitles an entity to the use of a feature \
+\under an
+           asset.";
+
+        leaf universal-access {
+          type boolean;
+          default "false";
+          description "Optional flag to signal that the entitlment i\
+\s not attached to any holder, that is, the permissions granted are \
+\for everybody.";
+        }
+
+        container holders {
+
+          presence "The holders container should be created only whe\
+\n the data server
+          can provide information of the holder of the entitlement.";
+
+          must "not(../universal-access = 'true')" {
+            error-message "The 'holders' container cannot exist when\
+\ universal-access is set.";
+          }
+
+          description
+            "The entities to which the entilements grants permissios\
+\n to.
+             There can be multiple of them. 
+             The container SHOULD not exist if the data server does \
+\not known
+             of the holders of the entitlement. An empty holders SHO\
+\ULD be avoided, instead
+             the universal-access flag should be set.
+             It might be expanded to cover selection cases e.g. all \
+\users in
+             a special country.";
+
+          container organizations_names {
+            leaf-list organizations {
+              type string;
+            }
+          }
+          container users_names {
+            leaf-list users {
+              type string;
+            }
+          }
+          // We could expand this to more generic selections of users
+          // or organizations, or in general add a flexible way of e\
+\xpanding it
+          // via keying by a instance
+        }
+        container assets {
+          container network-inventory {
+            leaf-list network-elements {
+              type string;
+            }
+            container components {
+              list component {
+                key "network-element component-id";
+                leaf network-element {
+                  type string;
+                }
+                leaf component-id {
+                  type string;
+                }
+
+              }
+            }
+          }
+          // We could expand this to more generic selections of users
+          // or organizations, or in general add a flexible way of e\
+\xpanding it
+          // via keying by a instance
+        }
+        // We could have other container with more descriptive set o\
+\f assets
+        // such as "all laptops in school Y (site license)"
+
+      }
+      }
+    }
+  }
+
+  // Let us define the entitlement capabilities for feature and reso\
+\ures
+  // An entitlmeent capability will add a feature
+  // We leave open many things here, that's why iti s only descripti\
+\ve
+
+  identity entitlement-capability-feature-description {
+    base entitlement-capability-description;
+  }
+
+  augment "/network-inventory-entitlements/entitlements/entitlement/\
+\capabilities/capability-class/capability" {
+    when "derived-from-or-self(../capability-class, "
+       + " 'entitlement-capability-feature-description')";
+    leaf feature-class {
+      type leafref {
+        path "/network-inventory-entitlements/features/entitlement-f\
+\eature-class/entitlement-feature-class";
+      }
+      description
+        "Class of feature to enable";
+    }
+    leaf feature-id {
+      type leafref {
+        path "/network-inventory-entitlements/features/entitlement-f\
+\eature-class[entitlement-feature-class="
+           + "current()/../feature-class]/feature/feature-id";
+      }
+      description
+        "Feature that this entitlement enables on the asset";
+    }
+  }
+
+  // A resource capability will extend the resources of an asset
+  // here we dont provide much context, it is just for simple cases
+
+  identity entitlement-capability-resource-description {
+    base entitlement-capability-description;
+  }
+
+  augment "/network-inventory-entitlements/entitlements/entitlement/\
+\capabilities/capability-class/capability" {
+    when "derived-from-or-self(../capability-class, "
+       + " 'entitlement-capability-resource-description')";
+    leaf resource-description {
+      type string;
+      description
+        "Description of the resource capability";
+    }
+    leaf resource-units {
+      type string;
+    }
+    leaf resource-amount {
+      type int32;
+    }
+  }
+
+  identity entitlement-global-restriction-generic {
+    description
+      "A generic restriction with a maximum of a resource, and its c\
+\urrent value.";
+    base entitlement-global-restriction;
+  }
+
+  augment "/network-inventory-entitlements/entitlements/entitlement/\
+\restrictions/entitlment-restriction-class/restriction" {
+    when "derived-from-or-self(../entitlement-restriction-class, "
+       + "'entitlement-global-restriction-generic')";
+    leaf description {
+      type string;
+      description
+        "Description of the resource capability";
+    }
+    leaf units {
+      type string;
+    }
+    leaf max-value {
+      type int32;
+    }
+    leaf current-value {
+      type int32;
+    }
+  }
+
+  identity entitlement-asset-restriction {
+    description "Restriction for an asset";
+  }
+
+
+  augment "/nwi:network-inventory/nwi:network-elements/nwi:network-e\
+\lement" {
+    description
+      "Aguments a component with entitlement information";
+    container entitlement-information {
+      description
+        "Containing holding information about entitlements and the
+         features/capabilities they grant";
+      container entitlements {
+        description
+          "List of entitlements installed in the asset";
+        list entitlment {
+          description
+            "Entitlement installed in the asset.";
+          key "entitlement-id";
+          leaf entitlement-id {
+            type leafref {
+              path "/network-inventory-entitlements/entitlements/ent\
+\itlement/uid";
+            }
+          }
+
+            leaf component-id {
+              description "If the entitlement is specificly for a  c\
+\omponent of the 
+              network-element, specify it";
+              type leafref {
+                path "../../../../nwi:components/nwi:component/nwi:c\
+\omponent-id";
+              }
+            }
+        }
+      }
+      container feature-information {
+        list feature-use {
+          key "feature-class feature-id";
+          description "Contains information of the use of a feature \
+\within an asset";
+          leaf feature-class {
+            type leafref {
+              path "/network-inventory-entitlements/features/entitle\
+\ment-feature-class/entitlement-feature-class";
+            }
+            description
+              "Class of feature to enable";
+          }
+          leaf feature-id {
+            type leafref {
+              path "/network-inventory-entitlements/features/entitle\
+\ment-feature-class[entitlement-feature-class="
+                 + "current()/../feature-class]/feature/feature-id";
+            }
+            description
+              "Feature that this entitlement enables on the asset";
+          }
+
+            leaf component-id {
+              description "If the restriction is for a specific comp\
+\onent of the 
+              network-element, specify it";
+              type leafref {
+                path "../../../../nwi:components/nwi:component/nwi:c\
+\omponent-id";
+              }
+            }
+
+          container supporting-entitlements {
+            description
+              "An optional list of entitlements allowing the use of \
+\the feature";
+            list entitlement {
+              key "entitlement-id";
+              description
+                "Subfeature ID";
+              leaf entitlement-id {
+                type leafref {
+                  path "../../../../../entitlements/entitlment/entit\
+\lement-id";
+                }
+                description
+                  "Reference to almo-class";
+              }
+            }
+          }
+          leaf allowed {
+            type boolean;
+            description
+              "Whther the level of usage of the feature will leave it
+               to infrigement if the entilement in entitlements is r\
+\emoved";
+          }
+          leaf in-use {
+            type boolean;
+            description
+              "Optional argument.Whether the feature use is infrigin\
+\g its entilement level.
+               It means the feature is in use iwthout an entitlement\
+\, or going over a level.
+               It should explicitly be set if the asset can report. \
+\not reporting this 
+               value means its value is not determined by the asset";
+          }
+        }
+      }
+
+      container asset-restrictions {
+        list asset-restriction-class {
+          key "asset-restriction-class";
+          leaf  asset-restriction-class {
+            type identityref {
+              base entitlement-asset-restriction;
+            }
+            must "derived-from-or-self(current(), "
+               + " 'entitlement-asset-restriction')";
+          }
+
+          list asset-restriction {
+            key "asset-restriction-id";
+
+            leaf component-id {
+              description "If the feature is applied to a specific c\
+\omponent of the 
+              network-element, specify it";
+              type leafref {
+                path "../../../../../nwi:components/nwi:component/nw\
+\i:component-id";
+              }
+            }
+
+            leaf asset-restriction-id {
+              type string;
+              description "Restriction id. It can be meaningless";
+            }
+
+            leaf description {
+              type string;
+              description "A description of the restriction. It shou\
+\ld quickly communicate what's being restricted in the asset.";
+            }
+
+          }
+
+
+        }
+      }
+
+    }
+  }
+
+  identity entitlement-asset-restriction-basic {
+    description "Restriction for an asset based on a feature";
+    base entitlement-asset-restriction;
+  }
+
+  augment "/nwi:network-inventory/nwi:network-elements/nwi:network-e\
+\lement/"
+        + "entitlement-information/asset-restrictions/asset-restrict\
+\ion-class/asset-restriction" {
+    when "derived-from-or-self(../asset-restriction-class, "
+       + " 'entitlement-asset-restriction-basic')";
+
+      leaf resource-name {
+        type string;
+      }
+
+      leaf units {
+        type string;
+      }
+
+      leaf max-value {
+        type int32;
+      }
+
+      leaf current-value {
+        type int32;
+      }
+
+    }
+
+  identity entitlement-asset-restriction-feature {
+    description "Restriction for an asset based on a feature";
+    base entitlement-asset-restriction-basic;
+  }
+
+  augment "/nwi:network-inventory/nwi:network-elements/nwi:network-e\
+\lement/"
+        + "entitlement-information/asset-restrictions/asset-restrict\
+\ion-class/asset-restriction" {
+    when "derived-from-or-self(../asset-restriction-class, "
+       + " 'entitlement-asset-restriction-feature')";
+
+      leaf feature-class {
+        type leafref {
+          path "../../../../feature-information/feature-use/feature-\
+\class";
+        }
+        description
+          "Class of feature to enable";
+      }
+      leaf feature-id {
+        type leafref {
+          path "../../../../feature-information/feature-use[feature-\
+\class="
+          + "current()/../feature-class]/feature-id";
+        }
+        description
+          "Feature that this entitlement enables on the asset";
+      }
+
+    }
+
+}

@@ -1,0 +1,47 @@
+Entry 0:
+  feature_name: acme_line_card_generic_operation
+  allowed: True
+  in_use: True
+  supporting_entitlements: ent_acme_line_card_generic_operation
+  restrictions_apply: False
+  asset: router_one-acme_router_one_line_card
+
+Entry 1:
+  feature_name: acme_line_card_generic_operation
+  allowed: True
+  in_use: True
+  supporting_entitlements: ent_acme_line_card_generic_operation
+  restrictions_apply: False
+  asset: router_two-acme_router_two_line_card
+
+Entry 2:
+  feature_name: acme_port_400gbps_breakpout
+  allowed: True
+  in_use: True
+  supporting_entitlements: ent_acme_line_card_full_ports
+  restrictions_apply: False
+  asset: router_one-acme_router_one_port_400gbps
+
+Entry 3:
+  feature_name: acme_port_400gbps_breakpout
+  allowed: False
+  in_use: False
+  supporting_entitlements: 
+  restrictions_apply: False
+  asset: router_two-acme_router_two_port_400gbps
+
+Entry 4:
+  feature_name: acme_router_generic_operation
+  allowed: True
+  in_use: True
+  supporting_entitlements: ent_acme_router_generic_operation_one
+  restrictions_apply: False
+  asset: router_one
+
+Entry 5:
+  feature_name: acme_router_generic_operation
+  allowed: True
+  in_use: True
+  supporting_entitlements: ent_acme_router_generic_operation_one
+  restrictions_apply: False
+  asset: router_two
