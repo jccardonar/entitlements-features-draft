@@ -204,3 +204,14 @@ TODO
 
 TODO
 
+# Change log
+{:numbered="false"}
+
+RFC Editor Note: This section is to be removed during the final publication of the document.
+
+* Reference to {{?I-D.draft-palmero-ivy-ps-ALMO}} draft and {{?I-D.draft-palmero-ivy-DMALMO}}, looking to simplify the objective and understanding of it, with focus on entitlements and features, reducing scope to assets, features, usage and entitlements; with special highlight to the interrelation to entitlements.
+
+# Contributors
+{:numbered="false"}
+
+This document was created by meaningful contributions (by alphabetical order) from Jan Lindblad.
