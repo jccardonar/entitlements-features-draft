@@ -204,3 +204,15 @@ TODO
 
 TODO
 
+# Change log
+{:numbered="false"}
+
+RFC Editor Note: This section is to be removed during the final publication of the document.
+
+* Reference to {{?I-D.draft-palmero-ivy-ps-ALMO}} draft and {{?I-D.draft-palmero-ivy-DMALMO}}
+
+# Contributors
+{:numbered="false"}
+
+This document was created by meaningful contributions (by alphabetical order) from Jan Lindblad.
+

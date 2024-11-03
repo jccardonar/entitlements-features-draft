@@ -5,10 +5,10 @@
 IVY                                                      M. Palmero, Ed.
 Internet-Draft                                             Cisco Systems
 Intended status: Informational                           C. Cardona, Ed.
-Expires: 25 April 2025                                               NTT
+Expires: 7 May 2025                                                  NTT
                                                            D. Lopez, Ed.
                                                           Telefonica I+D
-                                                         22 October 2024
+                                                         3 November 2024
 
 
                 A YANG module for entitlement inventory
@@ -39,7 +39,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 April 2025.
+   This Internet-Draft will expire on 7 May 2025.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Palmero, et al.           Expires 25 April 2025                 [Page 1]
+Palmero, et al.            Expires 7 May 2025                   [Page 1]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
    and restrictions with respect to this document.  Code Components
@@ -66,15 +66,15 @@ Internet-Draft            entitlement inventory             October 2024
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-     1.1.  Glosary . . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Glosary . . . . . . . . . . . . . . . . . . . . . . . . .   3
      1.2.  Requirements language . . . . . . . . . . . . . . . . . .   3
      1.3.  Scope of the entitlement model  . . . . . . . . . . . . .   3
-     1.4.  Out of scope elmements of the DLMO entitlement model  . .   3
-     1.5.  Features (or maybe capabilities?) . . . . . . . . . . . .   4
+     1.4.  Out of scope elmements of the DLMO entitlement model  . .   4
+     1.5.  Features (or maybe capabilities?) . . . . . . . . . . . .   5
    2.  Entitlements Modeling . . . . . . . . . . . . . . . . . . . .   5
      2.1.  Toy example for entitlement model . . . . . . . . . . . .   5
      2.2.  What entitlements are administered/owned by the
-           organization (entitlement's inventory)? . . . . . . . . .  11
+           organization (entitlement's inventory)? . . . . . . . . .  12
      2.3.  What is the link between a entitlement and assets?  . . .  14
      2.4.  What constraints do assets, under the current entitlements,
            impose on the actors' use of the asset's features?  . . .  15
@@ -86,10 +86,12 @@ Table of Contents
    4.  Use cases . . . . . . . . . . . . . . . . . . . . . . . . . .  34
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  35
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .  35
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  35
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  35
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .  35
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  35
+   Change log  . . . . . . . . . . . . . . . . . . . . . . . . . . .  35
+   Contributors  . . . . . . . . . . . . . . . . . . . . . . . . . .  35
+   References  . . . . . . . . . . . . . . . . . . . . . . . . . . .  35
+     Normative References  . . . . . . . . . . . . . . . . . . . . .  35
+     Informative References  . . . . . . . . . . . . . . . . . . . .  35
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  36
 
 1.  Introduction
 
@@ -102,17 +104,19 @@ Table of Contents
    model that, complementing the network inventory module, can provide
    the information the asset/entitlement adminstrator needs for this.
 
+
+
+
+
+
+Palmero, et al.            Expires 7 May 2025                   [Page 2]
+
+Internet-Draft            entitlement inventory            November 2024
+
+
 1.1.  Glosary
 
    TODO.  We need the distinction between licenses and entitlements.
-
-
-
-
-Palmero, et al.           Expires 25 April 2025                 [Page 2]
-
-Internet-Draft            entitlement inventory             October 2024
-
 
 1.2.  Requirements language
 
@@ -154,6 +158,18 @@ Internet-Draft            entitlement inventory             October 2024
    The model is designed with flexibility in mind, allowing for
    expansion through the utilization of tools provided by YANG.
 
+
+
+
+
+
+
+
+Palmero, et al.            Expires 7 May 2025                   [Page 3]
+
+Internet-Draft            entitlement inventory            November 2024
+
+
 1.4.  Out of scope elmements of the DLMO entitlement model
 
    The realm of entitlements or licenses is inherently complex,
@@ -162,14 +178,6 @@ Internet-Draft            entitlement inventory             October 2024
    address various situations through examples and use cases, we
    acknowledge that the model might not be able to cover all corner
    cases without ambiguity.  In such cases, we recommend that
-
-
-
-Palmero, et al.           Expires 25 April 2025                 [Page 3]
-
-Internet-Draft            entitlement inventory             October 2024
-
-
    implementations provide additional documentation to clarify potential
    ambiguities.
 
@@ -205,6 +213,19 @@ Internet-Draft            entitlement inventory             October 2024
    separate from, for instance, the ability of an user to configure MPLS
    due to access control limitations.
 
+
+
+
+
+
+
+
+
+Palmero, et al.            Expires 7 May 2025                   [Page 4]
+
+Internet-Draft            entitlement inventory            November 2024
+
+
 1.5.  Features (or maybe capabilities?)
 
    Entitlements entitle a holder to use a feature of an asset.  In some
@@ -218,14 +239,6 @@ Internet-Draft            entitlement inventory             October 2024
    features, which falls under the responsibility of the model's
    implementers.  Also, the main philosofy behind the model is to only
    list those features that are allowed/restricted based on the
-
-
-
-Palmero, et al.           Expires 25 April 2025                 [Page 4]
-
-Internet-Draft            entitlement inventory             October 2024
-
-
    entitlements that the organization coutns with.  The features under
    the entitlmeents model are not there to list all features available
    by an asset, but only those that depend on the entitlmeent state of
@@ -259,6 +272,16 @@ Internet-Draft            entitlement inventory             October 2024
 
    The resulting json with these scenario is attached next:
 
+
+
+
+
+
+Palmero, et al.            Expires 7 May 2025                   [Page 5]
+
+Internet-Draft            entitlement inventory            November 2024
+
+
    =============== NOTE: '\' line wrapping per RFC 8792 ================
 
    {
@@ -274,14 +297,6 @@ Internet-Draft            entitlement inventory             October 2024
                },
                {
                  "feature-id": "acme_line_card_generic_operation"
-
-
-
-Palmero, et al.           Expires 25 April 2025                 [Page 5]
-
-Internet-Draft            entitlement inventory             October 2024
-
-
                },
                {
                  "feature-id": "acme_port_400gbps_breakpout"
@@ -315,6 +330,14 @@ Internet-Draft            entitlement inventory             October 2024
            },
            {
              "uid": "f68600ee-aaa8-55ea-be3b-d7e66c9734b1",
+
+
+
+Palmero, et al.            Expires 7 May 2025                   [Page 6]
+
+Internet-Draft            entitlement inventory            November 2024
+
+
              "state": "active",
              "product-id": "general_component_license_operation",
              "entitlement-attachements": {
@@ -330,14 +353,6 @@ Internet-Draft            entitlement inventory             October 2024
            {
              "uid": "fb8a776a-0c8e-553a-a5cc-bf97e1a949b5",
              "state": "active",
-
-
-
-Palmero, et al.           Expires 25 April 2025                 [Page 6]
-
-Internet-Draft            entitlement inventory             October 2024
-
-
              "product-id": "line_card_full_port_license",
              "restrictions": {
                "entitlment-restriction-class": [
@@ -371,6 +386,14 @@ Internet-Draft            entitlement inventory             October 2024
        }
      },
      "ietf-network-inventory:network-inventory": {
+
+
+
+Palmero, et al.            Expires 7 May 2025                   [Page 7]
+
+Internet-Draft            entitlement inventory            November 2024
+
+
        "network-elements": {
          "network-element": [
            {
@@ -386,14 +409,6 @@ Internet-Draft            entitlement inventory             October 2024
                    "class": "iana-hardware:module"
                  }
                ]
-
-
-
-Palmero, et al.           Expires 25 April 2025                 [Page 7]
-
-Internet-Draft            entitlement inventory             October 2024
-
-
              },
              "ietf-network-inventory-entitlements:entitlement-informati\
    on": {
@@ -427,6 +442,14 @@ Internet-Draft            entitlement inventory             October 2024
                          {
                            "entitlement-id": "ff31c766-1ed1-59f7-a043-0\
    30de623f1a7"
+
+
+
+Palmero, et al.            Expires 7 May 2025                   [Page 8]
+
+Internet-Draft            entitlement inventory            November 2024
+
+
                          }
                        ]
                      }
@@ -442,14 +465,6 @@ Internet-Draft            entitlement inventory             October 2024
                            "entitlement-id": "f68600ee-aaa8-55ea-be3b-d\
    7e66c9734b1"
                          }
-
-
-
-Palmero, et al.           Expires 25 April 2025                 [Page 8]
-
-Internet-Draft            entitlement inventory             October 2024
-
-
                        ]
                      },
                      "component-id": "acme_router_one_line_card"
@@ -483,6 +498,14 @@ Internet-Draft            entitlement inventory             October 2024
                  },
                  {
                    "component-id": "acme_router_two_port_400gbps",
+
+
+
+Palmero, et al.            Expires 7 May 2025                   [Page 9]
+
+Internet-Draft            entitlement inventory            November 2024
+
+
                    "class": "iana-hardware:module"
                  }
                ]
@@ -498,14 +521,6 @@ Internet-Draft            entitlement inventory             October 2024
                    {
                      "entitlement-id": "f68600ee-aaa8-55ea-be3b-d7e66c9\
    734b1",
-
-
-
-Palmero, et al.           Expires 25 April 2025                 [Page 9]
-
-Internet-Draft            entitlement inventory             October 2024
-
-
                      "component-id": "acme_router_two_line_card"
                    }
                  ]
@@ -539,6 +554,14 @@ Internet-Draft            entitlement inventory             October 2024
                          }
                        ]
                      },
+
+
+
+Palmero, et al.            Expires 7 May 2025                  [Page 10]
+
+Internet-Draft            entitlement inventory            November 2024
+
+
                      "component-id": "acme_router_two_line_card"
                    },
                    {
@@ -554,14 +577,6 @@ Internet-Draft            entitlement inventory             October 2024
                  ]
                },
                "asset-restrictions": {
-
-
-
-Palmero, et al.           Expires 25 April 2025                [Page 10]
-
-Internet-Draft            entitlement inventory             October 2024
-
-
                  "asset-restriction-class": [
                    {
                      "asset-restriction-class": "entitlement-asset-rest\
@@ -588,6 +603,21 @@ Internet-Draft            entitlement inventory             October 2024
 
           Figure 1: Toy scenario for entitlement model description
 
+
+
+
+
+
+
+
+
+
+
+Palmero, et al.            Expires 7 May 2025                  [Page 11]
+
+Internet-Draft            entitlement inventory            November 2024
+
+
 2.2.  What entitlements are administered/owned by the organization
       (entitlement's inventory)?
 
@@ -610,13 +640,6 @@ Internet-Draft            entitlement inventory             October 2024
    Note that the model uses lists based on classes on multiple parts to
    be able to extend functionality.  We will provide examples of how
    this can be done in posterior releases of this document.
-
-
-
-Palmero, et al.           Expires 25 April 2025                [Page 11]
-
-Internet-Draft            entitlement inventory             October 2024
-
 
    The entitlements and features list do not specify which the assets
    (network elments or components) are actually assigned the
@@ -646,32 +669,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Palmero, et al.           Expires 25 April 2025                [Page 12]
+Palmero, et al.            Expires 7 May 2025                  [Page 12]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
    =============== NOTE: '\' line wrapping per RFC 8792 ================
@@ -725,9 +725,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 13]
+Palmero, et al.            Expires 7 May 2025                  [Page 13]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
    The model accommodates listing entitlements acquired by the
@@ -781,9 +781,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 14]
+Palmero, et al.            Expires 7 May 2025                  [Page 14]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
 2.4.  What constraints do assets, under the current entitlements, impose
@@ -837,9 +837,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 15]
+Palmero, et al.            Expires 7 May 2025                  [Page 15]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
    Entry 0:
@@ -893,9 +893,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 16]
+Palmero, et al.            Expires 7 May 2025                  [Page 16]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
                    Figure 3: Features report for toy case
@@ -949,9 +949,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 17]
+Palmero, et al.            Expires 7 May 2025                  [Page 17]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
               |     +--ro parent-rel-pos?          int32
@@ -1005,9 +1005,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 18]
+Palmero, et al.            Expires 7 May 2025                  [Page 18]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
                           +--rw nwie:component-id?           -> ../../.\
@@ -1061,9 +1061,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 19]
+Palmero, et al.            Expires 7 May 2025                  [Page 19]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
    ure-class
@@ -1117,9 +1117,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 20]
+Palmero, et al.            Expires 7 May 2025                  [Page 20]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
           |     +--rw in-use?                    boolean
@@ -1173,9 +1173,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 21]
+Palmero, et al.            Expires 7 May 2025                  [Page 21]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
        "WG Web:   <https://datatracker.ietf.org/wg/ivy/>
@@ -1229,9 +1229,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 22]
+Palmero, et al.            Expires 7 May 2025                  [Page 22]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
        description
@@ -1285,9 +1285,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 23]
+Palmero, et al.            Expires 7 May 2025                  [Page 23]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
          list entitlement-feature-class {
@@ -1341,9 +1341,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 24]
+Palmero, et al.            Expires 7 May 2025                  [Page 24]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
            container renewal-profile {
@@ -1397,9 +1397,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 25]
+Palmero, et al.            Expires 7 May 2025                  [Page 25]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
                  type identityref {
@@ -1453,9 +1453,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 26]
+Palmero, et al.            Expires 7 May 2025                  [Page 26]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
            }
@@ -1509,9 +1509,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 27]
+Palmero, et al.            Expires 7 May 2025                  [Page 27]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
                    key "network-element component-id";
@@ -1565,9 +1565,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 28]
+Palmero, et al.            Expires 7 May 2025                  [Page 28]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
          type leafref {
@@ -1621,9 +1621,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 29]
+Palmero, et al.            Expires 7 May 2025                  [Page 29]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
            "Description of the resource capability";
@@ -1677,9 +1677,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 30]
+Palmero, et al.            Expires 7 May 2025                  [Page 30]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
                }
@@ -1733,9 +1733,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 31]
+Palmero, et al.            Expires 7 May 2025                  [Page 31]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
                    }
@@ -1789,9 +1789,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 32]
+Palmero, et al.            Expires 7 May 2025                  [Page 32]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
                  }
@@ -1845,9 +1845,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 33]
+Palmero, et al.            Expires 7 May 2025                  [Page 33]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
            type int32;
@@ -1901,9 +1901,9 @@ Internet-Draft            entitlement inventory             October 2024
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 34]
+Palmero, et al.            Expires 7 May 2025                  [Page 34]
 
-Internet-Draft            entitlement inventory             October 2024
+Internet-Draft            entitlement inventory            November 2024
 
 
 5.  IANA Considerations
@@ -1914,9 +1914,25 @@ Internet-Draft            entitlement inventory             October 2024
 
    TODO
 
-7.  References
+Change log
 
-7.1.  Normative References
+   RFC Editor Note: This section is to be removed during the final
+   publication of the document.
+
+   *  Reference to [I-D.draft-palmero-ivy-ps-ALMO] draft and
+      [I-D.draft-palmero-ivy-DMALMO], looking to simplify the objective
+      and understanding of it, with focus on entitlements and features,
+      reducing scope to assets, features, usage and entitlements; with
+      special highlight to the interrelation to entitlements.
+
+Contributors
+
+   This document was created by meaningful contributions (by
+   alphabetical order) from Jan Lindblad.
+
+References
+
+Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1927,7 +1943,7 @@ Internet-Draft            entitlement inventory             October 2024
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-7.2.  Informative References
+Informative References
 
    [I-D.draft-ietf-ivy-network-inventory-yang-03]
               Yu, C., Belotti, S., Bouquier, J., Peruzzini, F., and P.
@@ -1936,6 +1952,21 @@ Internet-Draft            entitlement inventory             October 2024
               inventory-yang-03, 7 July 2024,
               <https://datatracker.ietf.org/doc/html/draft-ietf-ivy-
               network-inventory-yang-03>.
+
+
+
+
+
+Palmero, et al.            Expires 7 May 2025                  [Page 35]
+
+Internet-Draft            entitlement inventory            November 2024
+
+
+   [I-D.draft-palmero-ivy-ps-ALMO]
+              "*** BROKEN REFERENCE ***".
+
+   [I-D.draft-palmero-ivy-DMALMO]
+              "*** BROKEN REFERENCE ***".
 
 Authors' Addresses
 
@@ -1957,4 +1988,29 @@ Authors' Addresses
 
 
 
-Palmero, et al.           Expires 25 April 2025                [Page 35]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Palmero, et al.            Expires 7 May 2025                  [Page 36]
